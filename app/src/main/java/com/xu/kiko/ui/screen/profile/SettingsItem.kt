@@ -1,0 +1,159 @@
+package com.xu.kiko.ui.screen.profile
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.defaultMinSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ChevronRight
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Switch
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import com.xu.kiko.ui.theme.KikoTheme
+import com.xu.kiko.ui.theme.ThemeBlue
+import com.xu.kiko.ui.theme.spacing
+
+@Composable
+fun SettingsSwitchItem(
+    title: String,
+    checked: Boolean,
+    onCheckedChange: (Boolean) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    SettingsItemRow(
+        title = title,
+        modifier = modifier,
+        trailingContent = {
+            Switch(
+                checked = checked,
+                onCheckedChange = onCheckedChange
+            )
+        }
+    )
+}
+
+@Composable
+fun SettingsThemeColorItem(
+    title: String,
+    color: Color,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    SettingsItemRow(
+        title = title,
+        modifier = modifier.clickable(onClick = onClick),
+        trailingContent = {
+            Box(
+                modifier = Modifier
+                    .size(20.dp)
+                    .clip(CircleShape)
+                    .background(color)
+            )
+        }
+    )
+}
+
+@Composable
+fun SettingsNavigationItem(
+    title: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    SettingsItemRow(
+        title = title,
+        modifier = modifier.clickable(onClick = onClick),
+        trailingContent = {
+            Icon(
+                imageVector = Icons.Default.ChevronRight,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
+    )
+}
+
+@Composable
+private fun SettingsItemRow(
+    title: String,
+    modifier: Modifier = Modifier,
+    trailingContent: @Composable () -> Unit
+) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .defaultMinSize(minHeight = 56.dp),
+        horizontalArrangement = Arrangement.spacedBy(
+            MaterialTheme.spacing.medium
+        ),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = title,
+            modifier = Modifier.weight(1f),
+            style = MaterialTheme.typography.bodyLarge,
+            color = MaterialTheme.colorScheme.onSurface
+        )
+
+        trailingContent()
+    }
+}
+
+@Preview(showBackground = true, widthDp = 390)
+@Composable
+private fun SettingsSwitchItemPreview() {
+    KikoTheme {
+        SettingsSwitchItem(
+            title = "深色模式",
+            checked = false,
+            onCheckedChange = {}
+        )
+    }
+}
+
+@Preview(showBackground = true, widthDp = 390)
+@Composable
+private fun SettingsThemeColorItemPreview() {
+    KikoTheme {
+        SettingsThemeColorItem(
+            title = "主题色",
+            color = ThemeBlue,
+            onClick = {}
+        )
+    }
+}
+
+@Preview(showBackground = true, widthDp = 390)
+@Composable
+private fun SettingsNavigationItemPreview() {
+    KikoTheme {
+        SettingsNavigationItem(
+            title = "通知设置",
+            onClick = {}
+        )
+    }
+}
+
+@Preview(showBackground = true, widthDp = 390)
+@Composable
+private fun SettingsItemDarkPreview() {
+    KikoTheme(darkTheme = true) {
+        SettingsNavigationItem(
+            title = "通知设置",
+            onClick = {}
+        )
+    }
+}
+
