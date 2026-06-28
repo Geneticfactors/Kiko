@@ -19,6 +19,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.xu.kiko.ui.component.KikoBottomNavDestination
 import com.xu.kiko.ui.component.KikoBottomNavigationBar
 import com.xu.kiko.ui.screen.focus.FocusRoute
+import com.xu.kiko.ui.screen.notification.NotificationSettingsRoute
 import com.xu.kiko.ui.screen.profile.ProfileRoute
 import com.xu.kiko.ui.screen.statistics.StatisticsRoute
 import com.xu.kiko.ui.screen.tasks.TasksRoute
@@ -32,6 +33,19 @@ fun MainRoute(
 ) {
     var selectedDestination by rememberSaveable {
         mutableStateOf(KikoBottomNavDestination.HOME)
+    }
+    var showNotificationSettings by rememberSaveable {
+        mutableStateOf(false)
+    }
+
+    if (showNotificationSettings) {
+        NotificationSettingsRoute(
+            onNavigateBack = {
+                showNotificationSettings = false
+            },
+            modifier = modifier.fillMaxSize()
+        )
+        return
     }
 
     Scaffold(
@@ -83,6 +97,9 @@ fun MainRoute(
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(innerPadding),
+                    onNavigateToNotificationSettings = {
+                        showNotificationSettings = true
+                    },
                     onLoggedOut = onLoggedOut
                 )
             }

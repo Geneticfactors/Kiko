@@ -10,5 +10,4 @@ sealed interface LoginUiAction {
     data object OpenForgotPassword : LoginUiAction
     data object CloseForgotPassword : LoginUiAction
     data object OpenRegister : LoginUiAction
-
 }

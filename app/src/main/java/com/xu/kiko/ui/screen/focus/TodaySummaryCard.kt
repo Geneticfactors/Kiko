@@ -91,7 +91,6 @@ fun TodaySummaryCard(
                     modifier = Modifier.size(24.dp),
                     tint = MaterialTheme.colorScheme.primary
                 )
-
                 Text(
                     text = formatFocusMinutes(focusMinutes),
                     style = MaterialTheme.typography.titleMedium

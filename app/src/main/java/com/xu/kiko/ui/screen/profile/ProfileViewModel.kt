@@ -3,6 +3,7 @@ package com.xu.kiko.ui.screen.profile
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.xu.kiko.data.profile.ProfilePreferencesStore
+import com.xu.kiko.data.theme.ThemePreferencesStore
 import com.xu.kiko.domain.model.FocusHeatmapDay
 import com.xu.kiko.domain.repository.AuthRepository
 import com.xu.kiko.domain.repository.FocusSessionRepository
@@ -22,6 +23,7 @@ class ProfileViewModel(
     private val authRepository: AuthRepository,
     private val focusSessionRepository: FocusSessionRepository,
     private val profilePreferencesStore: ProfilePreferencesStore,
+    private val themePreferencesStore: ThemePreferencesStore,
     private val currentUserId: String,
     private val nowProvider: () -> Long = { System.currentTimeMillis() }
 ) : ViewModel() {
@@ -40,6 +42,7 @@ class ProfileViewModel(
         loadCurrentUser()
         observeHeatmapDays()
         observeAvatarImage()
+        observeThemePreferences()
     }
 
     fun onAction(action: ProfileUiAction) {
@@ -77,6 +80,9 @@ class ProfileViewModel(
         _uiState.update { state ->
             state.copy(darkModeEnabled = enabled)
         }
+        viewModelScope.launch {
+            themePreferencesStore.setDarkModeEnabled(enabled)
+        }
     }
 
     private fun setThemeColorDialogVisible(visible: Boolean) {
@@ -91,6 +97,9 @@ class ProfileViewModel(
                 selectedThemeColor = color,
                 showThemeColorDialog = false
             )
+        }
+        viewModelScope.launch {
+            themePreferencesStore.setThemeColor(color)
         }
     }
 
@@ -228,6 +237,28 @@ class ProfileViewModel(
                 .collect { avatarImagePath ->
                     _uiState.update { state ->
                         state.copy(avatarImagePath = avatarImagePath)
+                    }
+                }
+        }
+    }
+
+    private fun observeThemePreferences() {
+        viewModelScope.launch {
+            themePreferencesStore.observeThemePreferences()
+                .catch {
+                    _uiState.update { state ->
+                        state.copy(
+                            darkModeEnabled = false,
+                            selectedThemeColor = KikoThemeColor.BLUE
+                        )
+                    }
+                }
+                .collect { preferences ->
+                    _uiState.update { state ->
+                        state.copy(
+                            darkModeEnabled = preferences.darkModeEnabled,
+                            selectedThemeColor = preferences.themeColor
+                        )
                     }
                 }
         }

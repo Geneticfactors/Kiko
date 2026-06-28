@@ -52,6 +52,23 @@ interface TaskDao {
         """
         SELECT * FROM tasks
         WHERE userId = :userId
+            AND createdAtEpochMillis >= :startOfDayEpochMillis
+            AND createdAtEpochMillis < :endOfDayEpochMillis
+        ORDER BY isCompleted ASC, createdAtEpochMillis DESC
+        LIMIT :limit
+        """
+    )
+    suspend fun getToday(
+        userId: String,
+        startOfDayEpochMillis: Long,
+        endOfDayEpochMillis: Long,
+        limit: Int
+    ): List<TaskEntity>
+
+    @Query(
+        """
+        SELECT * FROM tasks
+        WHERE userId = :userId
             AND createdAtEpochMillis >= :startEpochMillis
             AND createdAtEpochMillis < :endEpochMillis
         ORDER BY createdAtEpochMillis ASC

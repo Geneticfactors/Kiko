@@ -47,6 +47,19 @@ class OfflineTaskRepository(
         }
     }
 
+    override suspend fun getTodayTasks(limit: Int): List<Task> {
+        val userId = currentUserIdProvider()
+        val startOfDay = startOfCurrentDayEpochMillis()
+        val endOfDay = startOfDay + MILLIS_PER_DAY
+
+        return taskDao.getToday(
+            userId = userId,
+            startOfDayEpochMillis = startOfDay,
+            endOfDayEpochMillis = endOfDay,
+            limit = limit.coerceAtLeast(1)
+        ).map { entity -> entity.toDomain() }
+    }
+
     override suspend fun saveTask(
         taskId: String?,
         input: TaskInput

@@ -14,19 +14,19 @@ interface FocusSessionRepository {
     suspend fun pauseSession(
         sessionId: String,
         focusedSeconds: Long
-    )
+    ): Boolean
 
-    suspend fun resumeSession(sessionId: String)
+    suspend fun resumeSession(sessionId: String): Boolean
 
     suspend fun completeSession(
         sessionId: String,
         focusedSeconds: Long
-    )
+    ): Boolean
 
     suspend fun cancelSession(
         sessionId: String,
         focusedSeconds: Long
-    )
+    ): Boolean
 
     suspend fun getActiveSession(): FocusSession?
 

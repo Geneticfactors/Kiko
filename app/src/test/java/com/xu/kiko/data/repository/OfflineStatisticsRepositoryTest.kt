@@ -261,6 +261,26 @@ class OfflineStatisticsRepositoryTest {
             endEpochMillis = endOfDayEpochMillis
         )
 
+        override suspend fun getToday(
+            userId: String,
+            startOfDayEpochMillis: Long,
+            endOfDayEpochMillis: Long,
+            limit: Int
+        ): List<TaskEntity> {
+            return tasks.value
+                .filter { task ->
+                    task.userId == userId &&
+                        task.createdAtEpochMillis >=
+                        startOfDayEpochMillis &&
+                        task.createdAtEpochMillis < endOfDayEpochMillis
+                }
+                .sortedWith(
+                    compareBy<TaskEntity> { it.isCompleted }
+                        .thenByDescending { it.createdAtEpochMillis }
+                )
+                .take(limit)
+        }
+
         override fun observeCreatedInRange(
             userId: String,
             startEpochMillis: Long,

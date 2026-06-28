@@ -1,6 +1,7 @@
 package com.xu.kiko
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -12,6 +13,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import com.xu.kiko.data.AppDependencies
+import com.xu.kiko.notification.KikoNotificationChannels
 import com.xu.kiko.ui.component.LoadingContent
 import com.xu.kiko.ui.screen.login.LoginRoute
 import com.xu.kiko.ui.screen.main.MainRoute
@@ -26,9 +28,23 @@ fun KikoApp(
     val authRepository = remember(context) {
         AppDependencies.authRepository(context)
     }
+    val notificationPreferencesStore = remember(context) {
+        AppDependencies.notificationPreferencesStore(context)
+    }
+    val dailyTaskReminderScheduler = remember(context) {
+        AppDependencies.dailyTaskReminderScheduler(context)
+    }
     val coroutineScope = rememberCoroutineScope()
     val sessionState = authRepository.observeSession()
         .collectAsAuthSessionState()
+
+    LaunchedEffect(context) {
+        KikoNotificationChannels.create(context)
+        notificationPreferencesStore.observeSettings()
+            .collect { settings ->
+                dailyTaskReminderScheduler.sync(settings)
+            }
+    }
 
     when (val state = sessionState.value) {
         AuthSessionState.Loading -> {
@@ -40,6 +56,11 @@ fun KikoApp(
                 currentUserId = state.currentUserId,
                 onLoggedOut = {
                     coroutineScope.launch {
+                        AppDependencies.focusNotificationCoordinator(
+                            context = context,
+                            currentUserId = state.currentUserId
+                        ).onLoggedOut()
+                        dailyTaskReminderScheduler.cancel()
                         authRepository.logout()
                     }
                 },

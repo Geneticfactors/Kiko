@@ -240,17 +240,13 @@ private fun LoginBrandHeader() {
             contentDescription = null,
             modifier = Modifier.size(96.dp)
         )
-
         Spacer(modifier = Modifier.height(MaterialTheme.spacing.large))
-
         Text(
             text = stringResource(R.string.login_brand_name),
             style = MaterialTheme.typography.headlineLarge,
             color = MaterialTheme.colorScheme.onBackground
         )
-
         Spacer(modifier = Modifier.height(MaterialTheme.spacing.small))
-
         Text(
             text = stringResource(R.string.login_slogan),
             style = MaterialTheme.typography.bodyLarge,
@@ -265,10 +261,8 @@ private fun authErrorMessage(error: AuthError): String {
     return when (error) {
         AuthError.INVALID_CREDENTIALS ->
             stringResource(R.string.auth_error_invalid_credentials)
-
         AuthError.PHONE_ALREADY_REGISTERED ->
             stringResource(R.string.auth_error_unknown)
-
         AuthError.UNKNOWN ->
             stringResource(R.string.auth_error_unknown)
     }
@@ -279,19 +273,14 @@ private fun authErrorMessage(error: AuthFieldError?): String? {
     return when (error) {
         AuthFieldError.REQUIRED ->
             stringResource(R.string.auth_error_required)
-
         AuthFieldError.INVALID_LENGTH ->
             stringResource(R.string.auth_error_nickname_length)
-
         AuthFieldError.INVALID_PHONE ->
             stringResource(R.string.auth_error_phone)
-
         AuthFieldError.PASSWORD_TOO_SHORT ->
             stringResource(R.string.auth_error_password_short)
-
         AuthFieldError.PASSWORD_MISMATCH ->
             stringResource(R.string.auth_error_password_mismatch)
-
         null -> null
     }
 }

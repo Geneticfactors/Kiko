@@ -6,11 +6,13 @@ import androidx.lifecycle.ViewModelProvider
 import com.xu.kiko.data.AppDependencies
 import com.xu.kiko.domain.repository.FocusSessionRepository
 import com.xu.kiko.domain.repository.TaskRepository
+import com.xu.kiko.notification.FocusNotificationCoordinator
 import com.xu.kiko.domain.usecase.task.ObserveTodayTaskUseCase
 
 class FocusViewModelFactory(
     private val taskRepository: TaskRepository,
-    private val focusSessionRepository: FocusSessionRepository
+    private val focusSessionRepository: FocusSessionRepository,
+    private val focusNotificationCoordinator: FocusNotificationCoordinator
 ) : ViewModelProvider.Factory {
 
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
@@ -19,7 +21,8 @@ class FocusViewModelFactory(
             return FocusViewModel(
                 observeTodayTask = ObserveTodayTaskUseCase(taskRepository),
                 taskRepository = taskRepository,
-                focusSessionRepository = focusSessionRepository
+                focusSessionRepository = focusSessionRepository,
+                focusNotificationCoordinator = focusNotificationCoordinator
             ) as T
         }
 
@@ -40,6 +43,11 @@ class FocusViewModelFactory(
                 ),
                 focusSessionRepository =
                 AppDependencies.focusSessionRepository(
+                    context = context,
+                    currentUserId = currentUserId
+                ),
+                focusNotificationCoordinator =
+                AppDependencies.focusNotificationCoordinator(
                     context = context,
                     currentUserId = currentUserId
                 )

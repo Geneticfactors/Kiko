@@ -122,27 +122,12 @@ private fun ThemeColorOptionRow(
                 .background(option.themeColor.color)
         )
 
-        Column(
+        Text(
+            text = stringResource(option.nameRes),
             modifier = Modifier.weight(1f),
-            verticalArrangement = Arrangement.spacedBy(
-                MaterialTheme.spacing.extraSmall
-            )
-        ) {
-            Text(
-                text = stringResource(option.nameRes),
-                style = MaterialTheme.typography.titleSmall,
-                color = MaterialTheme.colorScheme.onSurface
-            )
-
-            Text(
-                text = stringResource(
-                    R.string.profile_theme_color_value,
-                    option.hex
-                ),
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-        }
+            style = MaterialTheme.typography.titleSmall,
+            color = MaterialTheme.colorScheme.onSurface
+        )
 
         RadioButton(
             selected = selected,
@@ -153,41 +138,34 @@ private fun ThemeColorOptionRow(
 
 private data class ThemeColorOption(
     val themeColor: KikoThemeColor,
-    val nameRes: Int,
-    val hex: String
+    val nameRes: Int
 )
 
 private fun themeColorOptions(): List<ThemeColorOption> {
     return listOf(
         ThemeColorOption(
             themeColor = KikoThemeColor.BLUE,
-            nameRes = R.string.profile_theme_blue,
-            hex = "#3A80F7"
+            nameRes = R.string.profile_theme_blue
         ),
         ThemeColorOption(
             themeColor = KikoThemeColor.GREEN,
-            nameRes = R.string.profile_theme_green,
-            hex = "#53B35B"
+            nameRes = R.string.profile_theme_green
         ),
         ThemeColorOption(
             themeColor = KikoThemeColor.AMBER,
-            nameRes = R.string.profile_theme_amber,
-            hex = "#F4C544"
+            nameRes = R.string.profile_theme_amber
         ),
         ThemeColorOption(
             themeColor = KikoThemeColor.PINK,
-            nameRes = R.string.profile_theme_pink,
-            hex = "#F36CAA"
+            nameRes = R.string.profile_theme_pink
         ),
         ThemeColorOption(
             themeColor = KikoThemeColor.ORANGE,
-            nameRes = R.string.profile_theme_orange,
-            hex = "#FB7239"
+            nameRes = R.string.profile_theme_orange
         ),
         ThemeColorOption(
             themeColor = KikoThemeColor.VIOLET,
-            nameRes = R.string.profile_theme_violet,
-            hex = "#8852EE"
+            nameRes = R.string.profile_theme_violet
         )
     )
 }

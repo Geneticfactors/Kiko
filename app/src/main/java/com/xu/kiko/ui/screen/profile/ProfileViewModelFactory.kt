@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.xu.kiko.data.AppDependencies
 import com.xu.kiko.data.profile.ProfilePreferencesStore
+import com.xu.kiko.data.theme.ThemePreferencesStore
 import com.xu.kiko.domain.repository.AuthRepository
 import com.xu.kiko.domain.repository.FocusSessionRepository
 
@@ -12,6 +13,7 @@ class ProfileViewModelFactory(
     private val authRepository: AuthRepository,
     private val focusSessionRepository: FocusSessionRepository,
     private val profilePreferencesStore: ProfilePreferencesStore,
+    private val themePreferencesStore: ThemePreferencesStore,
     private val currentUserId: String
 ) : ViewModelProvider.Factory {
 
@@ -22,6 +24,7 @@ class ProfileViewModelFactory(
                 authRepository = authRepository,
                 focusSessionRepository = focusSessionRepository,
                 profilePreferencesStore = profilePreferencesStore,
+                themePreferencesStore = themePreferencesStore,
                 currentUserId = currentUserId
             ) as T
         }
@@ -45,6 +48,8 @@ class ProfileViewModelFactory(
                     ),
                 profilePreferencesStore =
                     AppDependencies.profilePreferencesStore(context),
+                themePreferencesStore =
+                    AppDependencies.themePreferencesStore(context),
                 currentUserId = currentUserId
             )
         }

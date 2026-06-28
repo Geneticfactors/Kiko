@@ -176,4 +176,21 @@
     <string name="profile_logout_message">退出后需要重新登录才能继续使用本地账户。</string>
     <string name="profile_logout_cancel">取消</string>
     <string name="profile_logout_confirm">退出登录</string>
+
+    <string name="notification_title">通知设置</string>
+    <string name="notification_back">返回</string>
+    <string name="notification_permission_enabled">系统通知已开启</string>
+    <string name="notification_permission_disabled">系统通知未开启</string>
+    <string name="notification_permission_description">系统权限关闭时，应用内设置会保留，但通知不会展示。</string>
+    <string name="notification_permission_request">请求通知权限</string>
+    <string name="notification_permission_system">打开系统设置</string>
+    <string name="notification_master_switch">通知总开关</string>
+    <string name="notification_focus_timer">专注进行中通知</string>
+    <string name="notification_focus_completed">专注完成提醒</string>
+    <string name="notification_break_reminder">休息提醒</string>
+    <string name="notification_daily_task">今日任务提醒</string>
+    <string name="notification_daily_task_time">提醒时间</string>
+    <string name="notification_time_title">选择提醒时间</string>
+    <string name="notification_hour">小时</string>
+    <string name="notification_minute">分钟</string>
 </resources>

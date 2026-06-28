@@ -7,6 +7,7 @@ import com.xu.kiko.domain.model.FocusSessionStatus
 import com.xu.kiko.domain.repository.FocusSessionRepository
 import com.xu.kiko.domain.repository.TaskRepository
 import com.xu.kiko.domain.usecase.task.ObserveTodayTaskUseCase
+import com.xu.kiko.notification.FocusNotificationCoordinator
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
@@ -23,6 +24,7 @@ class FocusViewModel(
     private val observeTodayTask: ObserveTodayTaskUseCase,
     private val taskRepository: TaskRepository,
     private val focusSessionRepository: FocusSessionRepository,
+    private val focusNotificationCoordinator: FocusNotificationCoordinator,
     private val nowProvider: () -> Long = { System.currentTimeMillis() }
 ) : ViewModel() {
 
@@ -215,6 +217,7 @@ class FocusViewModel(
                     )
                 }
                 startTicker()
+                focusNotificationCoordinator.onTimerStarted()
             }.onFailure {
                 _uiState.update {
                     it.copy(focusErrorMessage = START_FAILED_MESSAGE)
@@ -245,6 +248,7 @@ class FocusViewModel(
                             remainingSecondsFor(focusedSeconds, state)
                     )
                 }
+                focusNotificationCoordinator.onTimerPausedOrResumed()
             }.onFailure {
                 _uiState.update {
                     it.copy(focusErrorMessage = OPERATION_FAILED_MESSAGE)
@@ -267,6 +271,7 @@ class FocusViewModel(
                     state.copy(timerStatus = FocusTimerStatus.RUNNING)
                 }
                 startTicker()
+                focusNotificationCoordinator.onTimerPausedOrResumed()
             }.onFailure {
                 _uiState.update {
                     it.copy(focusErrorMessage = OPERATION_FAILED_MESSAGE)
@@ -296,6 +301,7 @@ class FocusViewModel(
                 )
             }.onSuccess {
                 timerJob?.cancel()
+                focusNotificationCoordinator.onTimerCancelled()
                 resetTimer(
                     showFinishedOverlay = false,
                     selectedTaskId = _uiState.value.selectedTaskId
@@ -315,13 +321,16 @@ class FocusViewModel(
         viewModelScope.launch {
             val focusedSeconds = _uiState.value.totalSeconds
             runCatching {
-                focusSessionRepository.completeSession(
+                val completed = focusSessionRepository.completeSession(
                     sessionId = sessionId,
                     focusedSeconds = focusedSeconds
                 )
-                taskRepository.incrementCompletedPomodoros(taskId)
+                if (completed) {
+                    taskRepository.incrementCompletedPomodoros(taskId)
+                }
             }.onSuccess {
                 timerJob?.cancel()
+                focusNotificationCoordinator.onTimerCompleted()
                 resetTimer(
                     showFinishedOverlay = true,
                     selectedTaskId = null
@@ -414,6 +423,7 @@ class FocusViewModel(
                 completeTimer()
             } else if (session.status == FocusSessionStatus.RUNNING) {
                 startTicker()
+                focusNotificationCoordinator.onTimerStarted()
             }
         }
     }

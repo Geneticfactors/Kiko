@@ -42,8 +42,8 @@ class OfflineFocusSessionRepository(
     override suspend fun pauseSession(
         sessionId: String,
         focusedSeconds: Long
-    ) {
-        updateActiveSession(sessionId) { session ->
+    ): Boolean {
+        return updateActiveSession(sessionId) { session ->
             session.copy(
                 focusedDurationSeconds = focusedSeconds,
                 lastStartedAtEpochMillis = null,
@@ -52,8 +52,8 @@ class OfflineFocusSessionRepository(
         }
     }
 
-    override suspend fun resumeSession(sessionId: String) {
-        updateActiveSession(sessionId) { session ->
+    override suspend fun resumeSession(sessionId: String): Boolean {
+        return updateActiveSession(sessionId) { session ->
             session.copy(
                 lastStartedAtEpochMillis = nowProvider(),
                 status = FocusSessionStatus.RUNNING.name
@@ -64,8 +64,8 @@ class OfflineFocusSessionRepository(
     override suspend fun completeSession(
         sessionId: String,
         focusedSeconds: Long
-    ) {
-        endSession(
+    ): Boolean {
+        return endSession(
             sessionId = sessionId,
             focusedSeconds = focusedSeconds,
             status = FocusSessionStatus.COMPLETED
@@ -75,8 +75,8 @@ class OfflineFocusSessionRepository(
     override suspend fun cancelSession(
         sessionId: String,
         focusedSeconds: Long
-    ) {
-        endSession(
+    ): Boolean {
+        return endSession(
             sessionId = sessionId,
             focusedSeconds = focusedSeconds,
             status = FocusSessionStatus.CANCELLED
@@ -143,8 +143,8 @@ class OfflineFocusSessionRepository(
         sessionId: String,
         focusedSeconds: Long,
         status: FocusSessionStatus
-    ) {
-        updateActiveSession(sessionId) { session ->
+    ): Boolean {
+        return updateActiveSession(sessionId) { session ->
             session.copy(
                 focusedDurationSeconds = focusedSeconds,
                 lastStartedAtEpochMillis = null,
@@ -157,16 +157,17 @@ class OfflineFocusSessionRepository(
     private suspend fun updateActiveSession(
         sessionId: String,
         transform: (FocusSessionEntity) -> FocusSessionEntity
-    ) {
+    ): Boolean {
         val current = focusSessionDao
             .getActiveSession(currentUserIdProvider())
-            ?: return
+            ?: return false
 
         if (current.id != sessionId) {
-            return
+            return false
         }
 
         focusSessionDao.update(transform(current))
+        return true
     }
 
     private fun startOfCurrentDayEpochMillis(): Long {

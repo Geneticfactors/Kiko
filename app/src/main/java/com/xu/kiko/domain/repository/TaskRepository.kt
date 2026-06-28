@@ -18,6 +18,10 @@ interface TaskRepository {
         limit: Int = 3
     ): Flow<List<Task>>
 
+    suspend fun getTodayTasks(
+        limit: Int = 3
+    ): List<Task>
+
     suspend fun saveTask(
         taskId: String?,
         input: TaskInput

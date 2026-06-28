@@ -61,6 +61,7 @@ dependencies {
     implementation(libs.androidx.datastore.preferences)
     implementation(libs.androidx.room.ktx)
     implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.work.runtime.ktx)
     implementation("androidx.compose.material:material-icons-extended")
     ksp(libs.androidx.room.compiler)
     testImplementation(libs.junit)
