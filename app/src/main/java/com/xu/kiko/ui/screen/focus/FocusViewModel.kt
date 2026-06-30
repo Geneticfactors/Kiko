@@ -1,4 +1,4 @@
-package com.xu.kiko.ui.screen.focus
+﻿package com.xu.kiko.ui.screen.focus
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -20,36 +20,62 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
+/**
+ * 专注页面 ViewModel
+ * 负责管理专注计时逻辑、任务选择、会话状态和 UI 状态
+ */
 class FocusViewModel(
+    // 观察今日任务用例
     private val observeTodayTask: ObserveTodayTaskUseCase,
+    // 任务仓库，用于任务操作
     private val taskRepository: TaskRepository,
+    // 专注会话仓库，用于会话管理
     private val focusSessionRepository: FocusSessionRepository,
+    // 通知协调器，用于计时期间的通知管理
     private val focusNotificationCoordinator: FocusNotificationCoordinator,
+    // 当前时间提供器，默认使用系统时间（便于测试）
     private val nowProvider: () -> Long = { System.currentTimeMillis() }
 ) : ViewModel() {
 
+    // 内部 UI 状态流
     private val _uiState = MutableStateFlow(FocusUiState())
-    val uiState: StateFlow<FocusUiState> =
-        _uiState.asStateFlow()
 
-    private val _effects =
-        Channel<FocusUiEffect>(Channel.BUFFERED)
-    val effects: Flow<FocusUiEffect> =
-        _effects.receiveAsFlow()
+    // 暴露给 UI 层的只读状态流
+    val uiState: StateFlow<FocusUiState> = _uiState.asStateFlow()
 
+    // 内部副作用通道
+    private val _effects = Channel<FocusUiEffect>(Channel.BUFFERED)
+
+    // 暴露给 UI 层的副作用流
+    val effects: Flow<FocusUiEffect> = _effects.receiveAsFlow()
+
+    // 计时协程任务
     private var timerJob: Job? = null
 
+    /**
+     * ViewModel 初始化
+     * 启动今日任务观察、今日统计观察和活动会话恢复
+     */
     init {
         observeTodayTasks()
         observeTodaySummary()
         restoreActiveSession()
     }
 
+    /**
+     * ViewModel 销毁时取消计时任务
+     */
     override fun onCleared() {
         timerJob?.cancel()
         super.onCleared()
     }
 
+    /**
+     * 处理用户操作
+     * 根据 [FocusUiAction] 分发到对应的处理方法
+     *
+     * @param action 用户操作意图
+     */
     fun onAction(action: FocusUiAction) {
         when (action) {
             FocusUiAction.Select25Minutes ->
@@ -117,6 +143,13 @@ class FocusViewModel(
         }
     }
 
+    /**
+     * 选择专注时长
+     * 仅在计时器处于空闲状态时生效
+     *
+     * @param duration 时长选项
+     * @param minutes 时长（分钟）
+     */
     private fun selectDuration(
         duration: FocusDurationOption,
         minutes: Int
@@ -136,6 +169,12 @@ class FocusViewModel(
         }
     }
 
+    /**
+     * 设置自定义时长弹窗可见性
+     * 仅在计时器空闲时允许显示
+     *
+     * @param visible 是否显示弹窗
+     */
     private fun setCustomDurationSheetVisible(visible: Boolean) {
         _uiState.update { state ->
             state.copy(
@@ -145,6 +184,12 @@ class FocusViewModel(
         }
     }
 
+    /**
+     * 确认自定义时长
+     * 时长范围限制在 5~120 分钟
+     *
+     * @param minutes 用户选择的时长（分钟）
+     */
     private fun confirmCustomDuration(minutes: Int) {
         val safeMinutes = minutes.coerceIn(5, 120)
         val totalSeconds = safeMinutes * 60L
@@ -164,6 +209,13 @@ class FocusViewModel(
         }
     }
 
+    /**
+     * 选择任务
+     * 仅在计时器空闲且任务未完成时可选择
+     * 再次点击已选中的任务会取消选择
+     *
+     * @param taskId 任务 ID
+     */
     private fun selectTask(taskId: String) {
         _uiState.update { state ->
             if (
@@ -183,6 +235,11 @@ class FocusViewModel(
         }
     }
 
+    /**
+     * 开始专注计时
+     * 要求先选择任务，否则显示错误提示
+     * 创建专注会话并启动计时 ticker
+     */
     private fun startTimer() {
         val state = _uiState.value
         val taskId = state.selectedTaskId
@@ -226,6 +283,10 @@ class FocusViewModel(
         }
     }
 
+    /**
+     * 暂停专注计时
+     * 记录当前已专注时长并更新会话状态
+     */
     private fun pauseTimer() {
         val sessionId = _uiState.value.activeSessionId ?: return
         if (_uiState.value.timerStatus != FocusTimerStatus.RUNNING) {
@@ -257,6 +318,10 @@ class FocusViewModel(
         }
     }
 
+    /**
+     * 恢复专注计时
+     * 重新启动计时 ticker
+     */
     private fun resumeTimer() {
         val sessionId = _uiState.value.activeSessionId ?: return
         if (_uiState.value.timerStatus != FocusTimerStatus.PAUSED) {
@@ -280,6 +345,10 @@ class FocusViewModel(
         }
     }
 
+    /**
+     * 请求停止计时
+     * 显示中断确认弹窗
+     */
     private fun requestStopTimer() {
         _uiState.update { state ->
             if (state.timerStatus == FocusTimerStatus.IDLE) {
@@ -290,6 +359,10 @@ class FocusViewModel(
         }
     }
 
+    /**
+     * 取消专注计时
+     * 终止当前会话并重置计时器状态
+     */
     private fun cancelTimer() {
         val sessionId = _uiState.value.activeSessionId ?: return
         viewModelScope.launch {
@@ -314,6 +387,10 @@ class FocusViewModel(
         }
     }
 
+    /**
+     * 完成专注计时
+     * 标记会话完成并增加任务的完成番茄数
+     */
     private fun completeTimer() {
         val sessionId = _uiState.value.activeSessionId ?: return
         val taskId = _uiState.value.selectedTaskId ?: return
@@ -343,6 +420,10 @@ class FocusViewModel(
         }
     }
 
+    /**
+     * 启动计时 ticker
+     * 每秒更新剩余时间，当剩余时间为 0 时完成计时
+     */
     private fun startTicker() {
         timerJob?.cancel()
         timerJob = viewModelScope.launch {
@@ -365,12 +446,25 @@ class FocusViewModel(
         }
     }
 
+    /**
+     * 获取当前已专注时长
+     * 从活动会话中计算已专注的秒数
+     *
+     * @return 已专注时长（秒）
+     */
     private suspend fun currentFocusedSeconds(): Long {
         val session = focusSessionRepository.getActiveSession()
             ?: return 0L
         return focusedSecondsFor(session)
     }
 
+    /**
+     * 计算会话已专注时长
+     * 包含历史专注时长和当前运行期间的时长
+     *
+     * @param session 专注会话
+     * @return 已专注时长（秒）
+     */
     private fun focusedSecondsFor(session: FocusSession): Long {
         val runningSeconds =
             if (
@@ -387,6 +481,13 @@ class FocusViewModel(
             .coerceAtMost(session.plannedDurationSeconds)
     }
 
+    /**
+     * 计算剩余时长
+     *
+     * @param focusedSeconds 已专注时长（秒）
+     * @param state 当前 UI 状态
+     * @return 剩余时长（秒）
+     */
     private fun remainingSecondsFor(
         focusedSeconds: Long,
         state: FocusUiState
@@ -395,6 +496,10 @@ class FocusViewModel(
             .coerceAtLeast(0L)
     }
 
+    /**
+     * 恢复活动会话
+     * 在 ViewModel 初始化时调用，恢复上次未完成的专注会话
+     */
     private fun restoreActiveSession() {
         viewModelScope.launch {
             val session = focusSessionRepository.getActiveSession()
@@ -428,6 +533,13 @@ class FocusViewModel(
         }
     }
 
+    /**
+     * 重置计时器状态
+     * 清除活动会话，重置状态为空闲
+     *
+     * @param showFinishedOverlay 是否显示完成弹窗
+     * @param selectedTaskId 保留的选中任务 ID
+     */
     private fun resetTimer(
         showFinishedOverlay: Boolean,
         selectedTaskId: String?
@@ -444,6 +556,12 @@ class FocusViewModel(
         }
     }
 
+    /**
+     * 设置任务完成状态
+     *
+     * @param taskId 任务 ID
+     * @param completed 是否完成
+     */
     private fun setTaskCompleted(
         taskId: String,
         completed: Boolean
@@ -458,6 +576,10 @@ class FocusViewModel(
         }
     }
 
+    /**
+     * 观察今日任务列表
+     * 监听任务变化并更新 UI 状态
+     */
     private fun observeTodayTasks() {
         viewModelScope.launch {
             observeTodayTask(TODAY_TASK_LIMIT)
@@ -487,6 +609,10 @@ class FocusViewModel(
         }
     }
 
+    /**
+     * 观察今日专注摘要
+     * 监听专注统计数据变化并更新 UI 状态
+     */
     private fun observeTodaySummary() {
         viewModelScope.launch {
             focusSessionRepository.observeTodaySummary()
@@ -511,11 +637,23 @@ class FocusViewModel(
         }
     }
 
+    /**
+     * 常量定义
+     */
     private companion object {
+        // 今日任务显示数量限制
         const val TODAY_TASK_LIMIT = 3
+
+        // 计时更新间隔（毫秒）
         const val TICK_DELAY_MILLIS = 1_000L
+
+        // 未选择任务时的提示消息
         const val SELECT_TASK_MESSAGE = "请先选择一个今日任务"
+
+        // 开始专注失败提示消息
         const val START_FAILED_MESSAGE = "专注开始失败，请重试"
+
+        // 通用操作失败提示消息
         const val OPERATION_FAILED_MESSAGE = "操作失败，请重试"
     }
 }

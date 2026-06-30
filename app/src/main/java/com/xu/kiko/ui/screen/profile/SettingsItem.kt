@@ -1,4 +1,4 @@
-package com.xu.kiko.ui.screen.profile
+﻿package com.xu.kiko.ui.screen.profile
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -26,11 +26,21 @@ import com.xu.kiko.ui.theme.KikoTheme
 import com.xu.kiko.ui.theme.ThemeBlue
 import com.xu.kiko.ui.theme.spacing
 
+/**
+ * 设置项开关组件
+ * 用于带开关的设置项（如深色模式）
+ */
 @Composable
 fun SettingsSwitchItem(
+    // 设置项标题
     title: String,
+
+    // 开关状态
     checked: Boolean,
+
+    // 开关状态变化回调
     onCheckedChange: (Boolean) -> Unit,
+
     modifier: Modifier = Modifier
 ) {
     SettingsItemRow(
@@ -45,17 +55,28 @@ fun SettingsSwitchItem(
     )
 }
 
+/**
+ * 设置项主题颜色组件
+ * 用于显示当前主题颜色的设置项
+ */
 @Composable
 fun SettingsThemeColorItem(
+    // 设置项标题
     title: String,
+
+    // 当前选中的颜色
     color: Color,
+
+    // 点击回调
     onClick: () -> Unit,
+
     modifier: Modifier = Modifier
 ) {
     SettingsItemRow(
         title = title,
         modifier = modifier.clickable(onClick = onClick),
         trailingContent = {
+            // 颜色预览圆点
             Box(
                 modifier = Modifier
                     .size(20.dp)
@@ -66,16 +87,25 @@ fun SettingsThemeColorItem(
     )
 }
 
+/**
+ * 设置项导航组件
+ * 用于可点击跳转到其他页面的设置项
+ */
 @Composable
 fun SettingsNavigationItem(
+    // 设置项标题
     title: String,
+
+    // 点击回调
     onClick: () -> Unit,
+
     modifier: Modifier = Modifier
 ) {
     SettingsItemRow(
         title = title,
         modifier = modifier.clickable(onClick = onClick),
         trailingContent = {
+            // 右侧箭头图标
             Icon(
                 imageVector = Icons.Default.ChevronRight,
                 contentDescription = null,
@@ -85,10 +115,18 @@ fun SettingsNavigationItem(
     )
 }
 
+/**
+ * 设置项行组件
+ * 设置项的基础布局，包含标题和尾部内容
+ */
 @Composable
 private fun SettingsItemRow(
+    // 设置项标题
     title: String,
+
     modifier: Modifier = Modifier,
+
+    // 尾部内容
     trailingContent: @Composable () -> Unit
 ) {
     Row(

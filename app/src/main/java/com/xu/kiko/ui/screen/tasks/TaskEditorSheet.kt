@@ -1,4 +1,4 @@
-package com.xu.kiko.ui.screen.tasks
+﻿package com.xu.kiko.ui.screen.tasks
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -35,13 +35,25 @@ import com.xu.kiko.ui.component.SecondaryButton
 import com.xu.kiko.ui.theme.KikoTheme
 import com.xu.kiko.ui.theme.spacing
 
+/**
+ * 任务编辑器弹窗组件
+ * 支持创建和编辑任务，包含标题、备注、番茄数和分类输入
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TaskEditorSheet(
+    // 编辑器 UI 状态
     state: TaskEditorUiState,
+
+    // 编辑器操作回调
     onAction: (TaskEditorUiAction) -> Unit,
+
+    // 关闭弹窗回调
     onDismissRequest: () -> Unit,
+
+    // 是否正在保存
     saving: Boolean,
+
     modifier: Modifier = Modifier
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -64,6 +76,7 @@ fun TaskEditorSheet(
                 MaterialTheme.spacing.large
             )
         ) {
+            // 标题（创建/编辑任务）
             Text(
                 text = stringResource(
                     if (state.mode == TaskEditorMode.CREATE) {
@@ -76,6 +89,7 @@ fun TaskEditorSheet(
                 color = MaterialTheme.colorScheme.onSurface
             )
 
+            // 标题输入框
             KikoTextField(
                 value = state.title,
                 onValueChange = {
@@ -95,6 +109,7 @@ fun TaskEditorSheet(
                 )
             )
 
+            // 备注输入框
             KikoTextField(
                 value = state.note,
                 onValueChange = {
@@ -119,6 +134,7 @@ fun TaskEditorSheet(
                 modifier = Modifier.heightIn(max = 160.dp)
             )
 
+            // 番茄数选择
             Column(
                 verticalArrangement = Arrangement.spacedBy(
                     MaterialTheme.spacing.small
@@ -152,6 +168,7 @@ fun TaskEditorSheet(
                 }
             }
 
+            // 分类选择
             Column(
                 verticalArrangement = Arrangement.spacedBy(
                     MaterialTheme.spacing.small
@@ -172,6 +189,7 @@ fun TaskEditorSheet(
                 )
             }
 
+            // 操作按钮（取消/保存）
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(

@@ -36,8 +36,14 @@ import com.xu.kiko.R
 import com.xu.kiko.ui.theme.KikoTheme
 import com.xu.kiko.ui.theme.spacing
 
+/**
+ * 底部导航目标枚举
+ * 定义所有底部导航项的标签和图标
+ */
 enum class KikoBottomNavDestination(
+    // 标签资源 ID
     @StringRes val labelRes: Int,
+    // 图标
     val icon: ImageVector
 ) {
     HOME(
@@ -58,11 +64,18 @@ enum class KikoBottomNavDestination(
     )
 }
 
+/**
+ * 底部导航栏组件
+ * 显示应用主要页面入口，支持选中状态切换和无障碍语义
+ */
 @Composable
 fun KikoBottomNavigationBar(
+    // 当前选中的导航目标
     selectedDestination: KikoBottomNavDestination,
+    // 导航目标选中回调
     onDestinationSelected: (KikoBottomNavDestination) -> Unit,
     modifier: Modifier = Modifier,
+    // 导航目标列表，默认显示所有目标
     destinations: List<KikoBottomNavDestination> =
         KikoBottomNavDestination.entries
 ) {
@@ -71,6 +84,7 @@ fun KikoBottomNavigationBar(
         color = MaterialTheme.colorScheme.surface
     ) {
         Column {
+            // 顶部分割线
             HorizontalDivider(
                 color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.45f)
             )
@@ -100,16 +114,24 @@ fun KikoBottomNavigationBar(
     }
 }
 
+/**
+ * 底部导航项组件
+ * 显示图标和标签，支持选中状态样式变化
+ */
 @Composable
 private fun KikoBottomNavigationItem(
+    // 导航目标
     destination: KikoBottomNavDestination,
+    // 是否选中
     selected: Boolean,
+    // 点击回调
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val label = stringResource(destination.labelRes)
     val selectedDescription = stringResource(R.string.bottom_nav_selected)
     val unselectedDescription = stringResource(R.string.bottom_nav_unselected)
+    // 根据选中状态设置颜色
     val contentColor = if (selected) {
         MaterialTheme.colorScheme.primary
     } else {
@@ -124,6 +146,7 @@ private fun KikoBottomNavigationItem(
                 onClick = onClick,
                 role = Role.Tab
             )
+            // 无障碍语义配置
             .semantics {
                 contentDescription = label
                 this.selected = selected

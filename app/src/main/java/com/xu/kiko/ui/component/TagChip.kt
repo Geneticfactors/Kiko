@@ -12,11 +12,18 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.xu.kiko.ui.theme.KikoTheme
 import com.xu.kiko.ui.theme.spacing
 
+/**
+ * 标签组件
+ * 用于显示分类、状态等信息的小圆角标签
+ */
 @Composable
 fun TagChip(
+    // 标签文本
     text: String,
     modifier: Modifier = Modifier,
+    // 容器颜色，默认使用次要容器色
     containerColor: Color = MaterialTheme.colorScheme.secondaryContainer,
+    // 内容颜色，默认使用次要容器文字色
     contentColor: Color = MaterialTheme.colorScheme.onSecondaryContainer
 ) {
     Surface(

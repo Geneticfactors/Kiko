@@ -1,4 +1,4 @@
-package com.xu.kiko.ui.screen.profile
+﻿package com.xu.kiko.ui.screen.profile
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -30,10 +30,19 @@ import com.xu.kiko.ui.theme.KikoTheme
 import com.xu.kiko.ui.theme.KikoThemeColor
 import com.xu.kiko.ui.theme.spacing
 
+/**
+ * 主题颜色选择对话框组件
+ * 提供多种主题颜色供用户选择
+ */
 @Composable
 fun ThemeColorDialog(
+    // 当前选中的主题颜色
     selectedThemeColor: KikoThemeColor,
+
+    // 颜色选中回调
     onThemeColorSelected: (KikoThemeColor) -> Unit,
+
+    // 对话框关闭回调
     onDismissRequest: () -> Unit
 ) {
     Dialog(onDismissRequest = onDismissRequest) {
@@ -44,10 +53,17 @@ fun ThemeColorDialog(
     }
 }
 
+/**
+ * 主题颜色对话框内容组件
+ */
 @Composable
 private fun ThemeColorDialogContent(
+    // 当前选中的主题颜色
     selectedThemeColor: KikoThemeColor,
+
+    // 颜色选中回调
     onThemeColorSelected: (KikoThemeColor) -> Unit,
+
     modifier: Modifier = Modifier
 ) {
     Surface(
@@ -64,12 +80,14 @@ private fun ThemeColorDialogContent(
                 MaterialTheme.spacing.large
             )
         ) {
+            // 标题
             Text(
                 text = stringResource(R.string.profile_theme_color_title),
                 style = MaterialTheme.typography.titleLarge,
                 color = MaterialTheme.colorScheme.onSurface
             )
 
+            // 颜色选项列表
             Column(
                 verticalArrangement = Arrangement.spacedBy(
                     MaterialTheme.spacing.small
@@ -89,11 +107,21 @@ private fun ThemeColorDialogContent(
     }
 }
 
+/**
+ * 主题颜色选项行组件
+ * 显示颜色预览、名称和单选按钮
+ */
 @Composable
 private fun ThemeColorOptionRow(
+    // 颜色选项
     option: ThemeColorOption,
+
+    // 是否选中
     selected: Boolean,
+
+    // 点击回调
     onClick: () -> Unit,
+
     modifier: Modifier = Modifier
 ) {
     val selectedDescription =
@@ -115,6 +143,7 @@ private fun ThemeColorOptionRow(
         ),
         verticalAlignment = Alignment.CenterVertically
     ) {
+        // 颜色预览
         Box(
             modifier = Modifier
                 .size(28.dp)
@@ -122,6 +151,7 @@ private fun ThemeColorOptionRow(
                 .background(option.themeColor.color)
         )
 
+        // 颜色名称
         Text(
             text = stringResource(option.nameRes),
             modifier = Modifier.weight(1f),
@@ -129,6 +159,7 @@ private fun ThemeColorOptionRow(
             color = MaterialTheme.colorScheme.onSurface
         )
 
+        // 单选按钮
         RadioButton(
             selected = selected,
             onClick = onClick
@@ -136,11 +167,20 @@ private fun ThemeColorOptionRow(
     }
 }
 
+/**
+ * 主题颜色选项数据类
+ * 包含主题颜色和名称资源ID
+ */
 private data class ThemeColorOption(
     val themeColor: KikoThemeColor,
     val nameRes: Int
 )
 
+/**
+ * 获取所有可用的主题颜色选项
+ *
+ * @return 主题颜色选项列表
+ */
 private fun themeColorOptions(): List<ThemeColorOption> {
     return listOf(
         ThemeColorOption(

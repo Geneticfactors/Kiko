@@ -1,4 +1,4 @@
-package com.xu.kiko.ui.screen.tasks
+﻿package com.xu.kiko.ui.screen.tasks
 
 import android.content.Context
 import androidx.lifecycle.ViewModel
@@ -7,7 +7,12 @@ import com.xu.kiko.data.AppDependencies
 import com.xu.kiko.domain.repository.TaskRepository
 import com.xu.kiko.domain.usecase.task.ValidateTaskUseCase
 
+/**
+ * 任务页面 ViewModel 工厂类
+ * 负责创建 [TasksViewModel] 并注入所需依赖
+ */
 class TasksViewModelFactory(
+    // 任务仓库
     private val taskRepository: TaskRepository
 ) : ViewModelProvider.Factory {
 
@@ -26,6 +31,10 @@ class TasksViewModelFactory(
     }
 
     companion object {
+        /**
+         * 从 [Context] 创建 [TasksViewModelFactory]
+         * 通过 [AppDependencies] 获取所需依赖
+         */
         fun fromContext(
             context: Context,
             currentUserId: String

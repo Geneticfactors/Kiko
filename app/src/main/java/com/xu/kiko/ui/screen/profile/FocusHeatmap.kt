@@ -1,4 +1,4 @@
-package com.xu.kiko.ui.screen.profile
+﻿package com.xu.kiko.ui.screen.profile
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -24,15 +24,27 @@ import com.xu.kiko.ui.theme.KikoTheme
 import com.xu.kiko.ui.theme.spacing
 import java.util.Calendar
 
+// 热力图显示的周数
 private const val HeatmapWeekCount = 4
+
+// 每周天数
 private const val HeatmapDaysPerWeek = 7
+
+// 热力图总天数
 private const val HeatmapDayCount = HeatmapWeekCount * HeatmapDaysPerWeek
 
+/**
+ * 专注热力图组件
+ * 以日历形式展示用户过去四周的专注情况
+ */
 @Composable
 fun FocusHeatmap(
+    // 热力图数据
     days: List<ProfileCalendarDayUiModel>,
+
     modifier: Modifier = Modifier
 ) {
+    // 补齐热力图数据到固定天数
     val heatmapDays = days
         .take(HeatmapDayCount)
         .let { visibleDays ->
@@ -57,14 +69,17 @@ fun FocusHeatmap(
                 MaterialTheme.spacing.medium
             )
         ) {
+            // 标题
             Text(
                 text = stringResource(R.string.profile_focus_calendar),
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.onSurface
             )
 
+            // 星期标题行
             FocusHeatmapWeekdayRow()
 
+            // 热力图网格
             Column(
                 verticalArrangement = Arrangement.spacedBy(
                     MaterialTheme.spacing.medium
@@ -78,6 +93,10 @@ fun FocusHeatmap(
     }
 }
 
+/**
+ * 热力图星期标题行组件
+ * 显示周一到周日的标题
+ */
 @Composable
 private fun FocusHeatmapWeekdayRow(
     modifier: Modifier = Modifier
@@ -109,9 +128,15 @@ private fun FocusHeatmapWeekdayRow(
     }
 }
 
+/**
+ * 热力图行组件
+ * 显示一周内每天的热力图单元格
+ */
 @Composable
 private fun FocusHeatmapRow(
+    // 一周七天的数据
     days: List<ProfileCalendarDayUiModel>,
+
     modifier: Modifier = Modifier
 ) {
     Row(
@@ -129,11 +154,18 @@ private fun FocusHeatmapRow(
     }
 }
 
+/**
+ * 热力图单元格组件
+ * 根据强度显示不同深浅的颜色
+ */
 @Composable
 private fun FocusHeatmapCell(
+    // 单日数据
     day: ProfileCalendarDayUiModel,
+
     modifier: Modifier = Modifier
 ) {
+    // 根据状态计算单元格颜色
     val color = when {
         day.isFuture ->
             MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.35f)
@@ -159,6 +191,13 @@ private fun FocusHeatmapCell(
     )
 }
 
+/**
+ * 生成热力图单元格的无障碍描述
+ * 根据日期和专注情况生成可读的描述文本
+ *
+ * @param day 单日数据
+ * @return 无障碍描述文本
+ */
 @Composable
 private fun heatmapCellDescription(
     day: ProfileCalendarDayUiModel
@@ -190,6 +229,13 @@ private fun heatmapCellDescription(
     }
 }
 
+/**
+ * 根据强度计算热力图单元格的透明度
+ * 强度越高，颜色越深
+ *
+ * @param intensity 强度值（0-4）
+ * @return 透明度值
+ */
 private fun heatmapAlphaFor(intensity: Int): Float {
     return when (intensity.coerceIn(0, 4)) {
         1 -> 0.35f
@@ -199,6 +245,13 @@ private fun heatmapAlphaFor(intensity: Int): Float {
     }
 }
 
+/**
+ * 将时间戳转换为日期文本
+ * 格式：MM月DD日
+ *
+ * @param epochMillis 时间戳（毫秒）
+ * @return 日期文本
+ */
 private fun dateTextFor(epochMillis: Long): String {
     val calendar = Calendar.getInstance().apply {
         timeInMillis = epochMillis

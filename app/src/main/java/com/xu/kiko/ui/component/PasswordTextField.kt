@@ -20,19 +20,32 @@ import androidx.compose.ui.unit.dp
 import com.xu.kiko.R
 import com.xu.kiko.ui.theme.KikoTheme
 
+/**
+ * 密码输入框组件
+ * 基于 KikoTextField 封装，支持密码可见性切换
+ */
 @Composable
 fun PasswordTextField(
+    // 当前输入值
     value: String,
+    // 值变化回调
     onValueChange: (String) -> Unit,
+    // 标签文本
     label: String,
+    // 密码是否可见
     passwordVisible: Boolean,
+    // 密码可见性切换回调
     onPasswordVisibilityChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
+    // 错误提示文本（可选）
     errorText: String? = null,
+    // 是否可用
     enabled: Boolean = true,
+    // 键盘选项，默认密码键盘
     keyboardOption: KeyboardOptions = KeyboardOptions(
         keyboardType = KeyboardType.Password
     ),
+    // 键盘动作
     keyboardActions: KeyboardActions = KeyboardActions.Default
 ) {
     KikoTextField(
@@ -44,11 +57,13 @@ fun PasswordTextField(
         enabled = enabled,
         keyboardOptions = keyboardOption,
         keyboardActions = keyboardActions,
+        // 根据可见性状态切换视觉转换
         visualTransformation = if (passwordVisible) {
             VisualTransformation.None
         }else{
             PasswordVisualTransformation()
         },
+        // 密码可见性切换图标
         trailingIcon = {
             IconButton(
                 onClick = {

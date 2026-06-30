@@ -1,4 +1,4 @@
-package com.xu.kiko.ui.screen.tasks
+﻿package com.xu.kiko.ui.screen.tasks
 
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
@@ -14,11 +14,21 @@ import com.xu.kiko.ui.component.KikoFilterChip
 import com.xu.kiko.ui.theme.KikoTheme
 import com.xu.kiko.ui.theme.spacing
 
+/**
+ * 任务筛选栏组件
+ * 横向排列的筛选标签，支持滚动
+ */
 @Composable
 fun TaskFilterBar(
+    // 当前选中的筛选条件
     selectedFilter: TaskFilter,
+
+    // 筛选条件选择回调
     onFilterSelected: (TaskFilter) -> Unit,
+
     modifier: Modifier = Modifier,
+
+    // 是否可用
     enabled: Boolean = true
 ) {
     Row(
@@ -40,6 +50,10 @@ fun TaskFilterBar(
     }
 }
 
+/**
+ * 获取筛选条件的显示顺序
+ * 确保筛选标签按固定顺序排列
+ */
 private fun taskFiltersInDisplayOrder(): List<TaskFilter> {
     return listOf(
         TaskFilter.ALL,
@@ -49,6 +63,13 @@ private fun taskFiltersInDisplayOrder(): List<TaskFilter> {
     )
 }
 
+/**
+ * 获取筛选条件的显示文本
+ * 根据筛选类型返回对应的本地化字符串
+ *
+ * @param filter 筛选条件
+ * @return 显示文本
+ */
 @Composable
 private fun taskFilterText(filter: TaskFilter): String {
     return when (filter) {

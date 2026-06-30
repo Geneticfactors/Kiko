@@ -14,20 +14,36 @@ import androidx.compose.ui.unit.dp
 import com.xu.kiko.ui.theme.KikoTheme
 import androidx.compose.ui.text.input.VisualTransformation
 
+/**
+ * 文本输入框组件
+ * 基于 OutlinedTextField 封装，提供统一的样式和错误状态支持
+ */
 @Composable
 fun KikoTextField(
+    // 当前输入值
     value: String,
+    // 值变化回调
     onValueChange: (String) -> Unit,
+    // 标签文本
     label: String,
     modifier: Modifier = Modifier,
+    // 占位文本（可选）
     placeholder: String? = null,
+    // 错误提示文本（可选）
     errorText: String? = null,
+    // 是否可用
     enabled: Boolean = true,
+    // 是否单行
     singleLine: Boolean = true,
+    // 键盘选项
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
+    // 键盘动作
     keyboardActions: KeyboardActions = KeyboardActions.Default,
+    // 视觉转换（如密码隐藏）
     visualTransformation: VisualTransformation = VisualTransformation.None,
+    // 前置图标（可选）
     leadingIcon: (@Composable (() -> Unit))? = null,
+    // 后置图标（可选）
     trailingIcon: (@Composable (() -> Unit))? = null
 ) {
     OutlinedTextField(
@@ -45,6 +61,7 @@ fun KikoTextField(
                 Text(text = it)
             }
         },
+        // 错误提示
         supportingText = errorText?.let {
             {
                 Text(

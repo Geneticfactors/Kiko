@@ -1,4 +1,4 @@
-package com.xu.kiko.ui.screen.profile
+﻿package com.xu.kiko.ui.screen.profile
 
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -26,12 +26,21 @@ import com.xu.kiko.ui.theme.KikoThemeColor
 import com.xu.kiko.ui.theme.spacing
 import java.util.Calendar
 
+/**
+ * 个人中心页面主组件
+ * 展示用户信息、专注热力图、设置项和退出登录功能
+ */
 @Composable
 fun ProfileScreen(
+    // 个人中心页面 UI 状态
     state: ProfileUiState,
+
+    // 用户操作回调
     onAction: (ProfileUiAction) -> Unit,
+
     modifier: Modifier = Modifier
 ) {
+    // 头像选择器启动器
     val avatarPickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
     ) { uri ->
@@ -51,6 +60,7 @@ fun ProfileScreen(
             MaterialTheme.spacing.large
         )
     ) {
+        // 页面标题
         Text(
             text = stringResource(R.string.profile_title),
             modifier = Modifier
@@ -64,6 +74,7 @@ fun ProfileScreen(
             color = MaterialTheme.colorScheme.onBackground
         )
 
+        // 用户头像和基本信息
         ProfileHeader(
             avatarText = state.avatarText,
             avatarImagePath = state.avatarImagePath,
@@ -75,17 +86,20 @@ fun ProfileScreen(
             modifier = Modifier.fillMaxWidth()
         )
 
+        // 专注热力图
         FocusHeatmap(
             days = state.focusedDays,
             modifier = Modifier.fillMaxWidth()
         )
 
+        // 设置区域标题
         Text(
             text = stringResource(R.string.profile_settings),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
 
+        // 设置卡片
         KikoCard(
             modifier = Modifier.fillMaxWidth(),
             contentPadding = PaddingValues(
@@ -93,6 +107,7 @@ fun ProfileScreen(
                 vertical = MaterialTheme.spacing.small
             )
         ) {
+            // 深色模式开关
             SettingsSwitchItem(
                 title = stringResource(R.string.profile_dark_mode),
                 checked = state.darkModeEnabled,
@@ -103,6 +118,7 @@ fun ProfileScreen(
                 }
             )
 
+            // 主题颜色设置
             SettingsThemeColorItem(
                 title = stringResource(R.string.profile_theme_color),
                 color = state.selectedThemeColor.color,
@@ -111,6 +127,7 @@ fun ProfileScreen(
                 }
             )
 
+            // 通知设置导航
             SettingsNavigationItem(
                 title = stringResource(
                     R.string.profile_notification_settings
@@ -121,6 +138,7 @@ fun ProfileScreen(
             )
         }
 
+        // 退出登录按钮卡片
         KikoCard(
             modifier = Modifier.fillMaxWidth(),
             contentPadding = PaddingValues(
@@ -138,6 +156,7 @@ fun ProfileScreen(
         }
     }
 
+    // 主题颜色选择对话框
     if (state.showThemeColorDialog) {
         ThemeColorDialog(
             selectedThemeColor = state.selectedThemeColor,
@@ -150,6 +169,7 @@ fun ProfileScreen(
         )
     }
 
+    // 退出登录确认对话框
     if (state.showLogoutConfirmDialog) {
         LogoutConfirmDialog(
             loggingOut = state.isLoggingOut,

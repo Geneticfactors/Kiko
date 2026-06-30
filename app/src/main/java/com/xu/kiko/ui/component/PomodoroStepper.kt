@@ -20,13 +20,22 @@ import com.xu.kiko.R
 import com.xu.kiko.ui.theme.KikoTheme
 import com.xu.kiko.ui.theme.spacing
 
+/**
+ * 番茄钟数量步进器组件
+ * 提供增减按钮和当前值显示，支持数值范围限制
+ */
 @Composable
 fun PomodoroStepper(
+    // 当前值
     value: Int,
+    // 减少回调
     onDecrease: () -> Unit,
+    // 增加回调
     onIncrease: () -> Unit,
     modifier: Modifier = Modifier,
+    // 是否可用
     enabled: Boolean = true,
+    // 数值范围，默认 1-20
     valueRange: IntRange = 1..20
 ) {
     Row(
@@ -36,8 +45,10 @@ fun PomodoroStepper(
             MaterialTheme.spacing.medium
         )
     ) {
+        // 减少按钮
         IconButton(
             onClick = onDecrease,
+            // 到达最小值时禁用
             enabled = enabled && value > valueRange.first,
             modifier = Modifier.sizeIn(
                 minWidth = 48.dp,
@@ -51,14 +62,17 @@ fun PomodoroStepper(
                 )
             )
         }
+        // 当前值显示
         Text(
             text = value.toString(),
             style = MaterialTheme.typography.titleMedium,
             color = MaterialTheme.colorScheme.onSurface
         )
 
+        // 增加按钮
         IconButton(
             onClick = onIncrease,
+            // 到达最大值时禁用
             enabled = enabled && value < valueRange.last,
             modifier = Modifier.sizeIn(
                 minWidth = 48.dp,

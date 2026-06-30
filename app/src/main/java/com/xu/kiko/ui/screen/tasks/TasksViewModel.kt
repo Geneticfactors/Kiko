@@ -1,4 +1,4 @@
-package com.xu.kiko.ui.screen.tasks
+﻿package com.xu.kiko.ui.screen.tasks
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -21,30 +21,55 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
+/**
+ * 任务页面 ViewModel
+ * 负责管理任务列表、筛选、编辑和删除逻辑
+ */
 class TasksViewModel(
+    // 任务仓库
     private val taskRepository: TaskRepository,
+
+    // 任务验证用例
     private val validateTask: ValidateTaskUseCase
 ) : ViewModel() {
 
+    // 当前选中的筛选条件
     private val selectedFilter =
         MutableStateFlow(TaskFilter.ALL)
 
+    // 内部 UI 状态流
     private val _uiState =
         MutableStateFlow(TasksUiState(isLoading = true))
+
+    // 暴露给 UI 层的只读状态流
     val uiState: StateFlow<TasksUiState> =
         _uiState.asStateFlow()
 
+    // 内部副作用通道
     private val _effects =
         Channel<TasksUiEffect>(Channel.BUFFERED)
+
+    // 暴露给 UI 层的副作用流
     val effects: Flow<TasksUiEffect> =
         _effects.receiveAsFlow()
 
+    // 观察任务列表的协程任务
     private var observeTasksJob: Job? = null
 
+    /**
+     * ViewModel 初始化
+     * 启动任务列表观察
+     */
     init {
         observeTasks()
     }
 
+    /**
+     * 处理用户操作
+     * 根据 [TasksUiAction] 分发到对应的处理方法
+     *
+     * @param action 用户操作意图
+     */
     fun onAction(action: TasksUiAction) {
         when (action) {
             is TasksUiAction.SelectFilter ->
@@ -85,6 +110,10 @@ class TasksViewModel(
         }
     }
 
+    /**
+     * 观察任务列表
+     * 监听任务变化和筛选条件变化，实时更新 UI 状态
+     */
     private fun observeTasks() {
         observeTasksJob?.cancel()
         observeTasksJob = viewModelScope.launch {
@@ -117,6 +146,12 @@ class TasksViewModel(
         }
     }
 
+    /**
+     * 选择筛选条件
+     * 更新筛选状态并触发任务列表重新加载
+     *
+     * @param filter 筛选条件
+     */
     private fun selectFilter(filter: TaskFilter) {
         selectedFilter.value = filter
         _uiState.update { state ->
@@ -124,6 +159,10 @@ class TasksViewModel(
         }
     }
 
+    /**
+     * 打开创建任务编辑器
+     * 创建新的空白编辑器状态
+     */
     private fun openCreateTask() {
         _uiState.update { state ->
             state.copy(
@@ -133,6 +172,12 @@ class TasksViewModel(
         }
     }
 
+    /**
+     * 打开编辑任务编辑器
+     * 根据任务 ID 加载任务数据到编辑器
+     *
+     * @param taskId 任务 ID
+     */
     private fun openEditTask(taskId: String) {
         val task = findTask(taskId) ?: return
 
@@ -151,6 +196,10 @@ class TasksViewModel(
         }
     }
 
+    /**
+     * 关闭任务编辑器
+     * 保存操作进行中时不允许关闭
+     */
     private fun closeEditor() {
         if (_uiState.value.isSaving) {
             return
@@ -161,6 +210,12 @@ class TasksViewModel(
         }
     }
 
+    /**
+     * 处理编辑器操作
+     * 根据 [TaskEditorUiAction] 更新编辑器状态
+     *
+     * @param action 编辑器操作意图
+     */
     private fun onEditorAction(action: TaskEditorUiAction) {
         when (action) {
             is TaskEditorUiAction.TitleChanged ->
@@ -215,6 +270,12 @@ class TasksViewModel(
         }
     }
 
+    /**
+     * 更新编辑器状态
+     * 通过 transform 函数修改当前编辑器状态
+     *
+     * @param transform 状态转换函数
+     */
     private fun updateEditor(
         transform: (TaskEditorUiState) -> TaskEditorUiState
     ) {
@@ -225,6 +286,10 @@ class TasksViewModel(
         }
     }
 
+    /**
+     * 保存任务
+     * 先验证输入，验证通过后保存到仓库
+     */
     private fun saveTask() {
         val editor = _uiState.value.editor ?: return
         val input = TaskInput(
@@ -278,6 +343,12 @@ class TasksViewModel(
         }
     }
 
+    /**
+     * 设置任务完成状态
+     *
+     * @param taskId 任务 ID
+     * @param completed 是否完成
+     */
     private fun setTaskCompleted(
         taskId: String,
         completed: Boolean
@@ -296,6 +367,12 @@ class TasksViewModel(
         }
     }
 
+    /**
+     * 请求删除任务
+     * 查找任务并设置为待删除状态，显示确认对话框
+     *
+     * @param taskId 任务 ID
+     */
     private fun requestDeleteTask(taskId: String) {
         val task = findTask(taskId) ?: return
 
@@ -304,6 +381,10 @@ class TasksViewModel(
         }
     }
 
+    /**
+     * 取消删除任务
+     * 删除操作进行中时不允许取消
+     */
     private fun cancelDeleteTask() {
         if (_uiState.value.isDeleting) {
             return
@@ -314,6 +395,10 @@ class TasksViewModel(
         }
     }
 
+    /**
+     * 确认删除任务
+     * 从仓库删除任务并更新状态
+     */
     private fun confirmDeleteTask() {
         val task = _uiState.value.pendingDeleteTask ?: return
 
@@ -343,6 +428,13 @@ class TasksViewModel(
         }
     }
 
+    /**
+     * 根据任务 ID 查找任务
+     * 在当前任务列表中搜索匹配的任务
+     *
+     * @param taskId 任务 ID
+     * @return 任务 UI 模型（找不到返回 null）
+     */
     private fun findTask(taskId: String): TaskUiModel? {
         return _uiState.value.sections
             .asSequence()
@@ -350,6 +442,12 @@ class TasksViewModel(
             .firstOrNull { task -> task.id == taskId }
     }
 
+    /**
+     * 按筛选条件过滤任务列表
+     *
+     * @param filter 筛选条件
+     * @return 过滤后的任务列表
+     */
     private fun List<Task>.filterBy(filter: TaskFilter): List<Task> {
         return when (filter) {
             TaskFilter.ALL -> this
@@ -364,6 +462,12 @@ class TasksViewModel(
         }
     }
 
+    /**
+     * 将任务列表转换为分组 UI 模型
+     * 按日期分组（今日/昨日/更早）
+     *
+     * @return 任务分组列表
+     */
     private fun List<Task>.toSections(): List<TaskSectionUiModel> {
         return map { task -> task.toUiModel() }
             .groupBy { task -> task.dateSection }
@@ -386,6 +490,9 @@ class TasksViewModel(
             }
     }
 
+    /**
+     * 将 Domain [Task] 转换为 UI 模型 [TaskUiModel]
+     */
     private fun Task.toUiModel(): TaskUiModel {
         return TaskUiModel(
             id = id,
@@ -400,6 +507,11 @@ class TasksViewModel(
         )
     }
 
+    /**
+     * 将时间戳转换为日期分组
+     *
+     * @return 日期分组
+     */
     private fun Long.toTaskDateSection(): TaskDateSection {
         val taskDay = dayOfYear(this)
         val today = dayOfYear(System.currentTimeMillis())
@@ -411,6 +523,12 @@ class TasksViewModel(
         }
     }
 
+    /**
+     * 计算时间戳对应的年内天数（含年份，避免跨年问题）
+     *
+     * @param epochMillis 时间戳
+     * @return 年内天数（含年份）
+     */
     private fun dayOfYear(epochMillis: Long): Int {
         val calendar = Calendar.getInstance()
         calendar.timeInMillis = epochMillis
@@ -418,11 +536,23 @@ class TasksViewModel(
             calendar.get(Calendar.DAY_OF_YEAR)
     }
 
+    /**
+     * 常量定义
+     */
     private companion object {
+        // 一年内最大天数（用于计算 dayOfYear）
         const val DAYS_PER_YEAR = 366
+
+        // 任务加载失败提示消息
         const val TASKS_LOAD_ERROR = "任务加载失败"
+
+        // 任务保存成功提示消息
         const val TASK_SAVED = "任务已保存"
+
+        // 任务删除成功提示消息
         const val TASK_DELETED = "任务已删除"
+
+        // 通用操作失败提示消息
         const val TASK_OPERATION_FAILED = "操作失败，请重试"
     }
 }

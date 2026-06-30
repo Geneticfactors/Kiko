@@ -1,4 +1,4 @@
-package com.xu.kiko.ui.screen.tasks
+﻿package com.xu.kiko.ui.screen.tasks
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.PaddingValues
@@ -31,12 +31,23 @@ import com.xu.kiko.ui.component.LoadingContent
 import com.xu.kiko.ui.theme.KikoTheme
 import com.xu.kiko.ui.theme.spacing
 
+/**
+ * 任务页面主组件
+ * 包含顶部导航栏、任务列表和底部操作按钮
+ * 根据状态显示编辑器弹窗和删除确认对话框
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TasksScreen(
+    // 任务页面 UI 状态
     state: TasksUiState,
+
+    // 用户操作回调
     onAction: (TasksUiAction) -> Unit,
+
     modifier: Modifier = Modifier,
+
+    // Snackbar 宿主状态，用于显示提示消息
     snackbarHostState: SnackbarHostState = remember {
         SnackbarHostState()
     }
@@ -78,6 +89,7 @@ fun TasksScreen(
                 .background(MaterialTheme.colorScheme.background)
         )
 
+        // 任务编辑器弹窗
         state.editor?.let { editor ->
             TaskEditorSheet(
                 state = editor,
@@ -91,6 +103,7 @@ fun TasksScreen(
             )
         }
 
+        // 删除确认对话框
         state.pendingDeleteTask?.let { task ->
             DeleteTaskDialog(
                 taskTitle = task.title,
@@ -106,6 +119,10 @@ fun TasksScreen(
     }
 }
 
+/**
+ * 任务页面内容组件
+ * 根据状态显示加载中、错误、空状态或任务列表
+ */
 @Composable
 private fun TasksScreenContent(
     state: TasksUiState,
@@ -113,10 +130,12 @@ private fun TasksScreenContent(
     modifier: Modifier = Modifier
 ) {
     when {
+        // 加载中状态
         state.isLoading -> {
             LoadingContent(modifier = modifier)
         }
 
+        // 错误状态
         state.errorMessage != null && state.sections.isEmpty() -> {
             ErrorContent(
                 message = state.errorMessage,
@@ -130,6 +149,7 @@ private fun TasksScreenContent(
             )
         }
 
+        // 空状态
         state.sections.isEmpty() -> {
             EmptyContent(
                 title = stringResource(R.string.tasks_empty_title),
@@ -148,6 +168,7 @@ private fun TasksScreenContent(
             )
         }
 
+        // 正常状态：显示任务列表
         else -> {
             LazyColumn(
                 modifier = modifier,
@@ -156,6 +177,7 @@ private fun TasksScreenContent(
                     vertical = MaterialTheme.spacing.large
                 )
             ) {
+                // 筛选栏
                 item {
                     TaskFilterBar(
                         selectedFilter = state.selectedFilter,
@@ -172,6 +194,7 @@ private fun TasksScreenContent(
                     )
                 }
 
+                // 任务分组列表
                 items(
                     items = state.sections,
                     key = { section -> section.section.name }

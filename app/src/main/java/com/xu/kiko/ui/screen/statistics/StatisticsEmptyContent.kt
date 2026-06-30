@@ -8,6 +8,10 @@ import com.xu.kiko.R
 import com.xu.kiko.ui.component.EmptyContent
 import com.xu.kiko.ui.theme.KikoTheme
 
+/**
+ * 统计页面空状态组件
+ * 当没有统计数据时显示提示信息
+ */
 @Composable
 fun StatisticsEmptyContent(
     modifier: Modifier = Modifier

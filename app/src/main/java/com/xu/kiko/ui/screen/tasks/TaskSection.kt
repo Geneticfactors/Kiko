@@ -1,4 +1,4 @@
-package com.xu.kiko.ui.screen.tasks
+﻿package com.xu.kiko.ui.screen.tasks
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -15,16 +15,30 @@ import com.xu.kiko.ui.component.TaskCard
 import com.xu.kiko.ui.theme.KikoTheme
 import com.xu.kiko.ui.theme.spacing
 
+/**
+ * 任务分组组件
+ * 显示一个日期分组及其下的任务列表
+ */
 @Composable
 fun TaskSection(
+    // 任务分组数据
     section: TaskSectionUiModel,
+
+    // 任务完成状态变化回调
     onCompletedChange: (
         taskId: String,
         completed: Boolean
     ) -> Unit,
+
+    // 任务点击回调（打开编辑器）
     onTaskClick: (taskId: String) -> Unit,
+
+    // 删除任务点击回调
     onDeleteClick: (taskId: String) -> Unit,
+
     modifier: Modifier = Modifier,
+
+    // 是否可用
     enabled: Boolean = true
 ) {
     Column(
@@ -33,12 +47,14 @@ fun TaskSection(
             MaterialTheme.spacing.medium
         )
     ) {
+        // 分组标题（今日/昨日/更早）
         Text(
             text = taskDateSectionText(section.section),
             style = MaterialTheme.typography.titleMedium,
             color = MaterialTheme.colorScheme.onBackground
         )
 
+        // 任务卡片列表
         section.tasks.forEach { task ->
             TaskCard(
                 title = task.title,
@@ -62,6 +78,12 @@ fun TaskSection(
     }
 }
 
+/**
+ * 获取日期分组的显示文本
+ *
+ * @param section 日期分组
+ * @return 显示文本
+ */
 @Composable
 private fun taskDateSectionText(section: TaskDateSection): String {
     return when (section) {
@@ -76,6 +98,12 @@ private fun taskDateSectionText(section: TaskDateSection): String {
     }
 }
 
+/**
+ * 获取任务分类的显示文本
+ *
+ * @param category 任务分类
+ * @return 显示文本
+ */
 @Composable
 private fun taskCategoryText(category: TaskCategory): String {
     return when (category) {

@@ -13,11 +13,19 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import com.xu.kiko.ui.theme.KikoTheme
 
+/**
+ * 空状态内容组件
+ * 用于列表为空时显示提示信息和操作按钮
+ */
 @Composable
 fun EmptyContent(
+    // 标题文本
     title: String,
+    // 描述信息
     message: String,
+    // 操作按钮文本（可选）
     actionText: String?,
+    // 操作按钮点击回调（可选）
     onAction: (() -> Unit)?,
     modifier: Modifier = Modifier
 ) {
@@ -42,6 +50,7 @@ fun EmptyContent(
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
 
+        // 显示操作按钮
         if (actionText != null && onAction != null) {
             PrimaryButton(
                 text = actionText,

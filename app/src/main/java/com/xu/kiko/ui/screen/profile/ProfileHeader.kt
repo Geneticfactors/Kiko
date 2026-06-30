@@ -1,4 +1,4 @@
-package com.xu.kiko.ui.screen.profile
+﻿package com.xu.kiko.ui.screen.profile
 
 import android.graphics.BitmapFactory
 import androidx.compose.foundation.Image
@@ -36,13 +36,27 @@ import com.xu.kiko.ui.theme.spacing
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
+/**
+ * 个人中心头部组件
+ * 展示用户头像、昵称和注册天数
+ */
 @Composable
 fun ProfileHeader(
+    // 头像文本（昵称首字）
     avatarText: String,
+
+    // 头像图片路径
     avatarImagePath: String?,
+
+    // 用户昵称
     nickname: String,
+
+    // 注册天数
     joinedDays: Int,
+
+    // 头像点击回调
     onAvatarClick: () -> Unit,
+
     modifier: Modifier = Modifier
 ) {
     Row(
@@ -52,12 +66,14 @@ fun ProfileHeader(
             MaterialTheme.spacing.large
         )
     ) {
+        // 头像组件
         ProfileAvatar(
             avatarText = avatarText,
             avatarImagePath = avatarImagePath,
             onClick = onAvatarClick
         )
 
+        // 用户信息列
         Column(
             modifier = Modifier.weight(1f),
             verticalArrangement = Arrangement.spacedBy(
@@ -87,13 +103,24 @@ fun ProfileHeader(
     }
 }
 
+/**
+ * 用户头像组件
+ * 支持图片头像和文本头像两种模式
+ */
 @Composable
 private fun ProfileAvatar(
+    // 头像文本
     avatarText: String,
+
+    // 头像图片路径
     avatarImagePath: String?,
+
+    // 点击回调
     onClick: () -> Unit,
+
     modifier: Modifier = Modifier
 ) {
+    // 异步加载头像位图
     val avatarBitmap = produceState<ImageBitmap?>(
         initialValue = null,
         avatarImagePath
@@ -119,6 +146,7 @@ private fun ProfileAvatar(
     ) {
         val bitmap = avatarBitmap.value
         if (bitmap != null) {
+            // 显示图片头像
             Image(
                 bitmap = bitmap,
                 contentDescription = null,
@@ -126,6 +154,7 @@ private fun ProfileAvatar(
                 contentScale = ContentScale.Crop
             )
         } else {
+            // 显示文本头像
             Text(
                 text = avatarText,
                 style = MaterialTheme.typography.headlineSmall,
@@ -137,6 +166,13 @@ private fun ProfileAvatar(
     }
 }
 
+/**
+ * 从文件路径加载头像位图
+ * 执行采样以避免内存溢出
+ *
+ * @param path 头像文件路径
+ * @return 头像位图，加载失败返回 null
+ */
 private suspend fun loadAvatarBitmap(path: String): ImageBitmap? {
     return withContext(Dispatchers.IO) {
         val bounds = BitmapFactory.Options().apply {
@@ -154,6 +190,14 @@ private suspend fun loadAvatarBitmap(path: String): ImageBitmap? {
     }
 }
 
+/**
+ * 计算位图采样大小
+ * 根据目标尺寸计算合适的采样比例，避免加载过大的位图
+ *
+ * @param width 原始宽度
+ * @param height 原始高度
+ * @return 采样大小（2的幂次方）
+ */
 private fun sampleSizeFor(
     width: Int,
     height: Int
@@ -168,6 +212,7 @@ private fun sampleSizeFor(
     return sampleSize
 }
 
+// 头像解码的最大尺寸
 private const val AVATAR_DECODE_SIZE = 256
 
 @Preview(showBackground = true)

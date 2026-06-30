@@ -1,4 +1,4 @@
-package com.xu.kiko.ui.screen.main
+﻿package com.xu.kiko.ui.screen.main
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -25,24 +25,34 @@ import com.xu.kiko.ui.screen.statistics.StatisticsRoute
 import com.xu.kiko.ui.screen.tasks.TasksRoute
 import com.xu.kiko.ui.theme.KikoTheme
 
+/**
+ * 主应用路由组件
+ * 作为登录后的主界面容器，管理底部导航和四个主要页面的切换
+ */
 @Composable
 fun MainRoute(
+    // 当前登录用户的 ID
     currentUserId: String,
+
+    // 退出登录的回调
     onLoggedOut: () -> Unit,
+
     modifier: Modifier = Modifier
 ) {
+    // 当前选中的底部导航目标，使用 [rememberSaveable] 保存状态以支持配置变更
     var selectedDestination by rememberSaveable {
         mutableStateOf(KikoBottomNavDestination.HOME)
     }
+
+    // 是否显示通知设置页面
     var showNotificationSettings by rememberSaveable {
         mutableStateOf(false)
     }
 
+    // 如果显示通知设置页面，优先渲染通知设置路由（覆盖主内容区）
     if (showNotificationSettings) {
         NotificationSettingsRoute(
-            onNavigateBack = {
-                showNotificationSettings = false
-            },
+            onNavigateBack = { showNotificationSettings = false },
             modifier = modifier.fillMaxSize()
         )
         return
@@ -52,6 +62,7 @@ fun MainRoute(
         modifier = modifier.fillMaxSize(),
         containerColor = MaterialTheme.colorScheme.background,
         bottomBar = {
+            // 底部导航栏
             KikoBottomNavigationBar(
                 selectedDestination = selectedDestination,
                 onDestinationSelected = { destination ->
@@ -60,43 +71,40 @@ fun MainRoute(
             )
         }
     ) { innerPadding ->
+        // 根据选中的导航目标渲染对应页面
         when (selectedDestination) {
+            // 首页 - 专注计时页面
             KikoBottomNavDestination.HOME -> {
                 FocusRoute(
                     currentUserId = currentUserId,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(innerPadding),
+                    modifier = Modifier.fillMaxSize().padding(innerPadding),
                     onNavigateToTasks = {
                         selectedDestination = KikoBottomNavDestination.TASKS
                     }
                 )
             }
 
+            // 任务页面
             KikoBottomNavDestination.TASKS -> {
                 TasksRoute(
                     currentUserId = currentUserId,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(innerPadding)
+                    modifier = Modifier.fillMaxSize().padding(innerPadding)
                 )
             }
 
+            // 统计页面
             KikoBottomNavDestination.STATISTICS -> {
                 StatisticsRoute(
                     currentUserId = currentUserId,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(innerPadding)
+                    modifier = Modifier.fillMaxSize().padding(innerPadding)
                 )
             }
 
+            // 个人中心页面
             KikoBottomNavDestination.PROFILE -> {
                 ProfileRoute(
                     currentUserId = currentUserId,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(innerPadding),
+                    modifier = Modifier.fillMaxSize().padding(innerPadding),
                     onNavigateToNotificationSettings = {
                         showNotificationSettings = true
                     },
@@ -107,14 +115,19 @@ fun MainRoute(
     }
 }
 
+/**
+ * 页面占位内容组件
+ * 用于预览时显示导航目标的标签名称
+ */
 @Composable
 private fun MainPlaceholderContent(
+    // 导航目标
     destination: KikoBottomNavDestination,
+
     modifier: Modifier = Modifier
 ) {
     Box(
-        modifier = modifier
-            .background(MaterialTheme.colorScheme.background),
+        modifier = modifier.background(MaterialTheme.colorScheme.background),
         contentAlignment = Alignment.Center
     ) {
         Text(

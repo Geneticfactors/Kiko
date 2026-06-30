@@ -12,6 +12,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.xu.kiko.ui.theme.KikoTheme
 
+/**
+ * 加载状态内容组件
+ * 显示居中的圆形进度指示器
+ */
 @Composable
 fun LoadingContent(
     modifier: Modifier = Modifier

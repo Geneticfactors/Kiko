@@ -9,6 +9,10 @@ import com.xu.kiko.domain.repository.TaskRepository
 import com.xu.kiko.notification.FocusNotificationCoordinator
 import com.xu.kiko.domain.usecase.task.ObserveTodayTaskUseCase
 
+/**
+ * 专注页面 ViewModel 工厂类
+ * 负责创建 [FocusViewModel] 并注入所需依赖
+ */
 class FocusViewModelFactory(
     private val taskRepository: TaskRepository,
     private val focusSessionRepository: FocusSessionRepository,
@@ -32,6 +36,10 @@ class FocusViewModelFactory(
     }
 
     companion object {
+        /**
+         * 从 [Context] 创建 [FocusViewModelFactory]
+         * 通过 [AppDependencies] 获取所需依赖
+         */
         fun fromContext(
             context: Context,
             currentUserId: String
@@ -41,13 +49,11 @@ class FocusViewModelFactory(
                     context = context,
                     currentUserId = currentUserId
                 ),
-                focusSessionRepository =
-                AppDependencies.focusSessionRepository(
+                focusSessionRepository = AppDependencies.focusSessionRepository(
                     context = context,
                     currentUserId = currentUserId
                 ),
-                focusNotificationCoordinator =
-                AppDependencies.focusNotificationCoordinator(
+                focusNotificationCoordinator = AppDependencies.focusNotificationCoordinator(
                     context = context,
                     currentUserId = currentUserId
                 )

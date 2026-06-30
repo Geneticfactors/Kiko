@@ -1,4 +1,4 @@
-package com.xu.kiko.ui.screen.statistics
+﻿package com.xu.kiko.ui.screen.statistics
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -23,10 +23,18 @@ import com.xu.kiko.ui.component.LoadingContent
 import com.xu.kiko.ui.theme.KikoTheme
 import com.xu.kiko.ui.theme.spacing
 
+/**
+ * 统计页面主组件
+ * 根据状态显示加载中、空状态或统计数据内容
+ */
 @Composable
 fun StatisticsScreen(
+    // 统计页面 UI 状态
     state: StatisticsUiState,
+
+    // 用户操作回调
     onAction: (StatisticsUiAction) -> Unit,
+
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -35,6 +43,7 @@ fun StatisticsScreen(
             .background(MaterialTheme.colorScheme.background)
             .padding(horizontal = MaterialTheme.spacing.extraLarge)
     ) {
+        // 页面标题
         Text(
             text = stringResource(R.string.statistics_title),
             modifier = Modifier
@@ -49,6 +58,7 @@ fun StatisticsScreen(
         )
 
         when {
+            // 加载中状态
             state.isLoading -> {
                 LoadingContent(
                     modifier = Modifier
@@ -57,6 +67,7 @@ fun StatisticsScreen(
                 )
             }
 
+            // 空状态
             !state.hasData -> {
                 StatisticsEmptyContent(
                     modifier = Modifier
@@ -65,6 +76,7 @@ fun StatisticsScreen(
                 )
             }
 
+            // 正常状态：显示统计数据
             else -> {
                 StatisticsScreenContent(
                     state = state,
@@ -79,6 +91,10 @@ fun StatisticsScreen(
     }
 }
 
+/**
+ * 统计页面内容组件
+ * 展示总专注时长、连续天数、完成率、柱状图和趋势图
+ */
 @Composable
 private fun StatisticsScreenContent(
     state: StatisticsUiState,
@@ -89,12 +105,14 @@ private fun StatisticsScreenContent(
         modifier = modifier.padding(bottom = MaterialTheme.spacing.section),
         verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.large)
     ) {
+        // 总专注时长卡片
         StatisticsTotalFocusCard(
             totalFocusMinutes = state.totalFocusMinutes,
             comparePercent = state.comparePercent,
             modifier = Modifier.fillMaxWidth()
         )
 
+        // 指标卡片（连续天数和完成率）
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.medium)
@@ -117,6 +135,7 @@ private fun StatisticsScreenContent(
             )
         }
 
+        // 每日专注柱状图
         StatisticsChartCard(
             title = stringResource(R.string.statistics_daily_focus),
             selectedRange = state.selectedRange,
@@ -131,6 +150,7 @@ private fun StatisticsScreenContent(
             )
         }
 
+        // 专注趋势图
         StatisticsChartCard(
             title = stringResource(R.string.statistics_focus_trend),
             selectedRange = state.selectedRange,
@@ -147,12 +167,24 @@ private fun StatisticsScreenContent(
     }
 }
 
+/**
+ * 图表卡片组件
+ * 包含标题、时间范围选择器和图表内容
+ */
 @Composable
 private fun StatisticsChartCard(
+    // 图表标题
     title: String,
+
+    // 当前选中的时间范围
     selectedRange: StatisticsRange,
+
+    // 时间范围选择回调
     onRangeSelected: (StatisticsRange) -> Unit,
+
     modifier: Modifier = Modifier,
+
+    // 图表内容
     chart: @Composable () -> Unit
 ) {
     KikoCard(modifier = modifier) {

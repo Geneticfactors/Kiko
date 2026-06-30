@@ -1,4 +1,4 @@
-package com.xu.kiko.ui.screen.profile
+﻿package com.xu.kiko.ui.screen.profile
 
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Text
@@ -10,10 +10,19 @@ import com.xu.kiko.R
 import com.xu.kiko.ui.component.DangerTextButton
 import com.xu.kiko.ui.theme.KikoTheme
 
+/**
+ * 退出登录确认对话框组件
+ * 用于确认用户是否真的要退出登录
+ */
 @Composable
 fun LogoutConfirmDialog(
+    // 是否正在退出登录中
     loggingOut: Boolean,
+
+    // 确认退出登录回调
     onConfirm: () -> Unit,
+
+    // 取消退出登录回调
     onDismissRequest: () -> Unit
 ) {
     AlertDialog(

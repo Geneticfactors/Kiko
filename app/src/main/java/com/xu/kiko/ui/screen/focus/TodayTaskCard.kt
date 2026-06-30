@@ -21,13 +21,27 @@ import androidx.compose.ui.unit.dp
 import com.xu.kiko.R
 import com.xu.kiko.ui.theme.KikoTheme
 
+/**
+ * 今日任务卡片组件
+ * 显示单个任务的标题、完成进度和勾选状态
+ */
 @Composable
 fun TodayTaskCard(
+    // 任务数据
     task: FocusTaskUiModel,
+
+    // 是否被选中
     selected: Boolean,
+
+    // 是否可用
     enabled: Boolean,
+
+    // 点击任务回调
     onClick: () -> Unit,
+
+    // 完成状态变化回调
     onCompletedChange: (Boolean) -> Unit,
+
     modifier: Modifier = Modifier
 ) {
     Surface(
@@ -53,12 +67,14 @@ fun TodayTaskCard(
             modifier = Modifier.padding(vertical = 4.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
+            // 勾选框
             Checkbox(
                 checked = task.isCompleted,
                 onCheckedChange = onCompletedChange,
                 enabled = enabled
             )
 
+            // 任务标题
             Text(
                 text = task.title,
                 modifier = Modifier.weight(1f),
@@ -79,6 +95,7 @@ fun TodayTaskCard(
 
             Spacer(modifier = Modifier.weight(0.05f))
 
+            // 完成进度（如 "1/3"）
             Text(
                 text = stringResource(
                     R.string.focus_task_progress,
@@ -100,7 +117,7 @@ private fun TodayTaskCardIncompletePreview() {
         TodayTaskCard(
             task = FocusTaskUiModel(
                 id = "1",
-                title = "完成 Focus 页面",
+                title = "完成 Focus 页面开发",
                 completedPomodoros = 1,
                 estimatedPomodoros = 3,
                 isCompleted = false
@@ -120,7 +137,7 @@ private fun TodayTaskCardCompletedPreview() {
         TodayTaskCard(
             task = FocusTaskUiModel(
                 id = "1",
-                title = "完成 Focus 页面",
+                title = "完成 Focus 页面开发",
                 completedPomodoros = 3,
                 estimatedPomodoros = 3,
                 isCompleted = true
@@ -131,5 +148,24 @@ private fun TodayTaskCardCompletedPreview() {
             onCompletedChange = {}
         )
     }
+}
 
+@Preview(showBackground = true)
+@Composable
+private fun TodayTaskCardSelectedPreview() {
+    KikoTheme {
+        TodayTaskCard(
+            task = FocusTaskUiModel(
+                id = "1",
+                title = "完成 Focus 页面开发",
+                completedPomodoros = 1,
+                estimatedPomodoros = 3,
+                isCompleted = false
+            ),
+            selected = true,
+            enabled = true,
+            onClick = {},
+            onCompletedChange = {}
+        )
+    }
 }

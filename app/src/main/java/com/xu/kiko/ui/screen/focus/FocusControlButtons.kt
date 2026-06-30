@@ -1,4 +1,4 @@
-package com.xu.kiko.ui.screen.focus
+﻿package com.xu.kiko.ui.screen.focus
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -15,17 +15,34 @@ import com.xu.kiko.ui.component.PrimaryButton
 import com.xu.kiko.ui.theme.KikoTheme
 import com.xu.kiko.ui.theme.spacing
 
+/**
+ * 专注控制按钮组组件
+ * 根据计时器状态显示不同的操作按钮
+ */
 @Composable
 fun FocusControlButtons(
+    // 计时器当前状态
     status: FocusTimerStatus,
+
+    // 开始按钮是否可用（需要先选择任务）
     startEnabled: Boolean,
+
+    // 开始计时回调
     onStart: () -> Unit,
+
+    // 暂停计时回调
     onPause: () -> Unit,
+
+    // 恢复计时回调
     onResume: () -> Unit,
+
+    // 请求停止计时回调
     onRequestStop: () -> Unit,
+
     modifier: Modifier = Modifier
 ) {
-    when(status){
+    when (status) {
+        // 空闲状态：显示单个开始按钮
         FocusTimerStatus.IDLE -> {
             PrimaryButton(
                 text = stringResource(R.string.focus_start),
@@ -34,23 +51,23 @@ fun FocusControlButtons(
                 enabled = startEnabled
             )
         }
+
+        // 运行/暂停状态：显示暂停/恢复按钮和停止按钮
         FocusTimerStatus.RUNNING,
-        FocusTimerStatus.PAUSED ->{
+        FocusTimerStatus.PAUSED -> {
             Row(
                 modifier = modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(
-                    MaterialTheme.spacing.medium
-                )
+                horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.medium)
             ) {
                 PrimaryButton(
-                    text = if (status == FocusTimerStatus.RUNNING){
+                    text = if (status == FocusTimerStatus.RUNNING) {
                         stringResource(R.string.focus_pause)
-                    }else{
+                    } else {
                         stringResource(R.string.focus_resume)
                     },
-                    onClick = if (status == FocusTimerStatus.RUNNING){
+                    onClick = if (status == FocusTimerStatus.RUNNING) {
                         onPause
-                    }else{
+                    } else {
                         onResume
                     },
                     modifier = Modifier.weight(1f)

@@ -1,4 +1,4 @@
-package com.xu.kiko.ui.screen.statistics
+﻿package com.xu.kiko.ui.screen.statistics
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
@@ -34,6 +34,13 @@ import com.xu.kiko.ui.theme.spacing
 import kotlin.math.abs
 import kotlin.math.max
 
+/**
+ * 格式化专注时长显示
+ * 将分钟数转换为友好的可读格式（支持小时和分钟混合显示）
+ *
+ * @param totalMinutes 总分钟数
+ * @return 格式化后的时长字符串
+ */
 @Composable
 private fun formatFocusDuration(totalMinutes: Int): String {
     val hours = totalMinutes / 60
@@ -46,10 +53,18 @@ private fun formatFocusDuration(totalMinutes: Int): String {
     }
 }
 
+/**
+ * 总专注时长卡片组件
+ * 显示周期内总专注时长和与上一周期的对比变化
+ */
 @Composable
 fun StatisticsTotalFocusCard(
+    // 总专注时长（分钟）
     totalFocusMinutes: Int,
+
+    // 与上一周期对比的变化百分比
     comparePercent: Int,
+
     modifier: Modifier = Modifier
 ) {
     KikoCard(modifier = modifier) {
@@ -74,6 +89,7 @@ fun StatisticsTotalFocusCard(
                 )
             }
 
+            // 对比变化显示
             Text(
                 text = when {
                     comparePercent > 0 ->
@@ -93,10 +109,18 @@ fun StatisticsTotalFocusCard(
     }
 }
 
+/**
+ * 统计指标卡片组件
+ * 显示单个统计指标（如连续天数、完成率）
+ */
 @Composable
 fun StatisticsMetricCard(
+    // 指标数值
     value: String,
+
+    // 指标标签
     label: String,
+
     modifier: Modifier = Modifier
 ) {
     KikoCard(modifier = modifier) {
@@ -134,9 +158,15 @@ fun StatisticsMetricCard(
     }
 }
 
+/**
+ * 每日专注柱状图组件
+ * 使用 Canvas 绘制每日专注时长的柱状图
+ */
 @Composable
 fun DailyFocusBarChart(
+    // 柱状图数据
     bars: List<StatisticsBarUiModel>,
+
     modifier: Modifier = Modifier
 ) {
     if (bars.isEmpty()) {
@@ -176,6 +206,7 @@ fun DailyFocusBarChart(
             }
         }
 
+        // 底部标签
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
@@ -191,9 +222,15 @@ fun DailyFocusBarChart(
     }
 }
 
+/**
+ * 专注趋势图组件
+ * 使用 Canvas 绘制专注时长的趋势折线图，包含渐变填充
+ */
 @Composable
 fun FocusTrendChart(
+    // 趋势数据点
     points: List<StatisticsTrendPointUiModel>,
+
     modifier: Modifier = Modifier
 ) {
     val primary = MaterialTheme.colorScheme.primary
@@ -212,6 +249,9 @@ fun FocusTrendChart(
             size.width / 2f
         }
 
+        /**
+         * 计算数据点在 Canvas 上的坐标
+         */
         fun pointOffset(index: Int, valueMinutes: Int): Offset {
             val x = if (points.size > 1) horizontalStep * index else size.width / 2f
             val ratio = valueMinutes.toFloat() / maxMinutes.toFloat()
@@ -219,6 +259,7 @@ fun FocusTrendChart(
             return Offset(x, y)
         }
 
+        // 单个数据点：只绘制圆点
         if (points.size == 1) {
             drawCircle(
                 color = primary,
@@ -231,6 +272,7 @@ fun FocusTrendChart(
         val linePath = Path()
         val fillPath = Path()
 
+        // 构建折线和填充路径
         points.forEachIndexed { index, point ->
             val offset = pointOffset(index, point.valueMinutes)
 
@@ -247,6 +289,7 @@ fun FocusTrendChart(
         fillPath.lineTo(size.width, size.height)
         fillPath.close()
 
+        // 绘制渐变填充
         drawPath(
             path = fillPath,
             brush = Brush.verticalGradient(
@@ -257,6 +300,7 @@ fun FocusTrendChart(
             )
         )
 
+        // 绘制折线
         drawPath(
             path = linePath,
             color = primary,
@@ -266,6 +310,7 @@ fun FocusTrendChart(
             )
         )
 
+        // 绘制数据点圆点
         points.forEachIndexed { index, point ->
             drawCircle(
                 color = primary,

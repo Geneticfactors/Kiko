@@ -14,11 +14,18 @@ import com.xu.kiko.ui.theme.KikoTheme
 import com.xu.kiko.ui.theme.spacing
 import androidx.compose.material3.MaterialTheme
 
+/**
+ * 任务分类选择器组件
+ * 水平滚动显示所有任务分类，支持单选
+ */
 @Composable
 fun CategorySelector(
+    // 当前选中的分类
     selectedCategory: TaskCategory,
+    // 分类选中回调
     onCategorySelected: (TaskCategory) -> Unit,
     modifier: Modifier = Modifier,
+    // 是否可用
     enabled: Boolean = true
 ) {
     Row(
@@ -40,6 +47,9 @@ fun CategorySelector(
     }
 }
 
+/**
+ * 将任务分类枚举转换为显示文本
+ */
 @Composable
 private fun taskCategoryText(category: TaskCategory): String {
     return when (category) {

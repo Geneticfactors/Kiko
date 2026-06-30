@@ -1,4 +1,4 @@
-package com.xu.kiko.ui.screen.focus
+﻿package com.xu.kiko.ui.screen.focus
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -29,15 +29,25 @@ import com.xu.kiko.ui.theme.KikoTheme
 import com.xu.kiko.ui.theme.spacing
 import kotlin.math.roundToInt
 
+/**
+ * 自定义时长弹窗组件
+ * 通过滑块和步进按钮选择自定义专注时长（5~120分钟）
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CustomDurationSheet(
+    // 当前选中的分钟数
     currentMinutes: Int,
+
+    // 关闭弹窗回调
     onDismiss: () -> Unit,
+
+    // 确认选择回调
     onConfirm: (Int) -> Unit
 ) {
+    // 选中的分钟数，使用 [rememberSaveable] 保存状态
     var selectedMinutes by rememberSaveable(currentMinutes) {
-        mutableIntStateOf(currentMinutes.coerceIn(5,120))
+        mutableIntStateOf(currentMinutes.coerceIn(5, 120))
     }
 
     ModalBottomSheet(
@@ -47,25 +57,20 @@ fun CustomDurationSheet(
             modifier = Modifier
                 .fillMaxWidth()
                 .navigationBarsPadding()
-                .padding(
-                    horizontal = MaterialTheme.spacing.extraLarge
-                )
+                .padding(horizontal = MaterialTheme.spacing.extraLarge)
         ) {
+            // 标题
             Text(
-                text = stringResource(
-                    R.string.focus_custom_duration_title
-                ),
+                text = stringResource(R.string.focus_custom_duration_title),
                 style = MaterialTheme.typography.titleLarge,
                 color = MaterialTheme.colorScheme.onSurface
             )
 
             Spacer(modifier = Modifier.height(MaterialTheme.spacing.large))
 
+            // 当前选中的时长显示
             Text(
-                text = stringResource(
-                    R.string.focus_custom_duration_value,
-                    selectedMinutes
-                ),
+                text = stringResource(R.string.focus_custom_duration_value, selectedMinutes),
                 style = MaterialTheme.typography.headlineMedium,
                 color = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.align(Alignment.CenterHorizontally)
@@ -73,62 +78,49 @@ fun CustomDurationSheet(
 
             Spacer(modifier = Modifier.height(MaterialTheme.spacing.large))
 
+            // 时长滑块（5~120分钟）
             Slider(
                 value = selectedMinutes.toFloat(),
                 onValueChange = { value ->
-                    selectedMinutes = value
-                        .roundToInt()
-                        .coerceIn(5,120)
+                    selectedMinutes = value.roundToInt().coerceIn(5, 120)
                 },
                 valueRange = 5f..120f
             )
 
             Spacer(modifier = Modifier.height(MaterialTheme.spacing.medium))
 
+            // 步进按钮（-5分钟 / +5分钟）
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(
-                    MaterialTheme.spacing.medium
-                )
+                horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.medium)
             ) {
                 OutlinedButton(
                     onClick = {
-                        selectedMinutes =
-                            (selectedMinutes - 5).coerceIn(5,120)
+                        selectedMinutes = (selectedMinutes - 5).coerceIn(5, 120)
                     },
                     enabled = selectedMinutes > 5,
                     modifier = Modifier.weight(1f)
                 ) {
-                    Text(
-                        text = stringResource(
-                            R.string.focus_custom_duration_decrease
-                        )
-                    )
+                    Text(text = stringResource(R.string.focus_custom_duration_decrease))
                 }
 
                 OutlinedButton(
                     onClick = {
-                        selectedMinutes =
-                            (selectedMinutes + 5).coerceIn(5,120)
+                        selectedMinutes = (selectedMinutes + 5).coerceIn(5, 120)
                     },
                     enabled = selectedMinutes < 120,
                     modifier = Modifier.weight(1f)
                 ) {
-                    Text(
-                        text = stringResource(
-                            R.string.focus_custom_duration_increase
-                        )
-                    )
+                    Text(text = stringResource(R.string.focus_custom_duration_increase))
                 }
             }
 
             Spacer(modifier = Modifier.height(MaterialTheme.spacing.large))
 
+            // 确认按钮
             PrimaryButton(
                 text = stringResource(R.string.focus_confirm),
-                onClick = {
-                    onConfirm(selectedMinutes)
-                },
+                onClick = { onConfirm(selectedMinutes) },
                 modifier = Modifier.fillMaxWidth()
             )
 
@@ -137,10 +129,7 @@ fun CustomDurationSheet(
     }
 }
 
-@Preview(
-    name = "Custom Duration Sheet",
-    showBackground = true
-)
+@Preview(name = "Custom Duration Sheet", showBackground = true)
 @Composable
 private fun CustomDurationSheetPreview() {
     KikoTheme {

@@ -1,4 +1,4 @@
-package com.xu.kiko.ui.screen.statistics
+﻿package com.xu.kiko.ui.screen.statistics
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -18,10 +18,18 @@ import androidx.compose.ui.unit.dp
 import com.xu.kiko.R
 import com.xu.kiko.ui.theme.KikoTheme
 
+/**
+ * 统计时间范围选择器组件
+ * 提供周/月两种时间范围切换
+ */
 @Composable
 fun StatisticsRangeSelector(
+    // 当前选中的时间范围
     selectRange: StatisticsRange,
+
+    // 时间范围选择回调
     onRangeSelected: (StatisticsRange) -> Unit,
+
     modifier: Modifier = Modifier
 ) {
     Row(
@@ -43,11 +51,21 @@ fun StatisticsRangeSelector(
     }
 }
 
+/**
+ * 时间范围选项组件
+ * 根据选中状态显示不同样式
+ */
 @Composable
 fun StatisticsRangeOption(
+    // 选项文本
     text: String,
+
+    // 是否选中
     selected: Boolean,
+
+    // 点击回调
     onClick: () -> Unit,
+
     modifier: Modifier = Modifier
 ) {
     val backgroundColor = if (selected) {

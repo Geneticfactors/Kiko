@@ -1,4 +1,4 @@
-package com.xu.kiko.ui.screen.notification
+﻿package com.xu.kiko.ui.screen.notification
 
 import android.os.Build
 import androidx.compose.foundation.background
@@ -50,15 +50,30 @@ import com.xu.kiko.ui.component.SecondaryButton
 import com.xu.kiko.ui.theme.KikoTheme
 import com.xu.kiko.ui.theme.spacing
 
+/**
+ * 通知设置页面主组件
+ * 展示各类通知开关、权限状态和时间选择器
+ */
 @Composable
 fun NotificationSettingsScreen(
+    // 通知设置页面 UI 状态
     state: NotificationSettingsUiState,
+
+    // 用户操作回调
     onAction: (NotificationSettingsUiAction) -> Unit,
+
+    // 返回导航回调
     onNavigateBack: () -> Unit,
+
+    // 请求通知权限回调
     onRequestPermission: () -> Unit,
+
+    // 打开系统设置回调
     onOpenSystemSettings: () -> Unit,
+
     modifier: Modifier = Modifier
 ) {
+    // 时间选择对话框显示状态
     var showTimeDialog by remember { mutableStateOf(false) }
 
     Column(
@@ -73,6 +88,7 @@ fun NotificationSettingsScreen(
             MaterialTheme.spacing.large
         )
     ) {
+        // 顶部导航栏
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -94,6 +110,7 @@ fun NotificationSettingsScreen(
             )
         }
 
+        // 通知权限卡片
         PermissionCard(
             systemNotificationsEnabled =
                 state.systemNotificationsEnabled,
@@ -101,6 +118,7 @@ fun NotificationSettingsScreen(
             onOpenSystemSettings = onOpenSystemSettings
         )
 
+        // 通知开关卡片
         KikoCard(
             modifier = Modifier.fillMaxWidth(),
             contentPadding = PaddingValues(
@@ -108,6 +126,7 @@ fun NotificationSettingsScreen(
                 vertical = MaterialTheme.spacing.small
             )
         ) {
+            // 通知总开关
             NotificationSwitchRow(
                 title = stringResource(
                     R.string.notification_master_switch
@@ -121,6 +140,7 @@ fun NotificationSettingsScreen(
                 }
             )
 
+            // 专注计时器通知
             NotificationSwitchRow(
                 title = stringResource(
                     R.string.notification_focus_timer
@@ -135,6 +155,7 @@ fun NotificationSettingsScreen(
                 }
             )
 
+            // 专注完成通知
             NotificationSwitchRow(
                 title = stringResource(
                     R.string.notification_focus_completed
@@ -149,6 +170,7 @@ fun NotificationSettingsScreen(
                 }
             )
 
+            // 休息提醒通知
             NotificationSwitchRow(
                 title = stringResource(
                     R.string.notification_break_reminder
@@ -164,6 +186,7 @@ fun NotificationSettingsScreen(
             )
         }
 
+        // 每日任务提醒卡片
         KikoCard(
             modifier = Modifier.fillMaxWidth(),
             contentPadding = PaddingValues(
@@ -171,6 +194,7 @@ fun NotificationSettingsScreen(
                 vertical = MaterialTheme.spacing.small
             )
         ) {
+            // 每日任务提醒开关
             NotificationSwitchRow(
                 title = stringResource(
                     R.string.notification_daily_task
@@ -185,6 +209,7 @@ fun NotificationSettingsScreen(
                 }
             )
 
+            // 每日任务提醒时间选择
             NotificationNavigationRow(
                 title = stringResource(
                     R.string.notification_daily_task_time
@@ -197,6 +222,7 @@ fun NotificationSettingsScreen(
         }
     }
 
+    // 时间选择对话框
     if (showTimeDialog) {
         TimePickerDialog(
             hour = state.dailyTaskReminderHour,
@@ -213,10 +239,19 @@ fun NotificationSettingsScreen(
     }
 }
 
+/**
+ * 通知权限卡片组件
+ * 显示系统通知权限状态和操作按钮
+ */
 @Composable
 private fun PermissionCard(
+    // 系统通知权限是否开启
     systemNotificationsEnabled: Boolean,
+
+    // 请求通知权限回调
     onRequestPermission: () -> Unit,
+
+    // 打开系统通知设置回调
     onOpenSystemSettings: () -> Unit
 ) {
     KikoCard(
@@ -260,6 +295,7 @@ private fun PermissionCard(
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
+                // 未开启权限时显示操作按钮
                 if (!systemNotificationsEnabled) {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                         PrimaryButton(
@@ -283,12 +319,24 @@ private fun PermissionCard(
     }
 }
 
+/**
+ * 通知开关行组件
+ * 显示通知选项标题和开关
+ */
 @Composable
 private fun NotificationSwitchRow(
+    // 选项标题
     title: String,
+
+    // 开关状态
     checked: Boolean,
+
+    // 开关状态变化回调
     onCheckedChange: (Boolean) -> Unit,
+
     modifier: Modifier = Modifier,
+
+    // 是否启用
     enabled: Boolean = true
 ) {
     Row(
@@ -315,11 +363,22 @@ private fun NotificationSwitchRow(
     }
 }
 
+/**
+ * 通知导航行组件
+ * 显示可点击的选项，右侧显示当前值
+ */
 @Composable
 private fun NotificationNavigationRow(
+    // 选项标题
     title: String,
+
+    // 当前值
     value: String,
+
+    // 是否启用
     enabled: Boolean,
+
+    // 点击回调
     onClick: () -> Unit
 ) {
     Row(
@@ -352,11 +411,22 @@ private fun NotificationNavigationRow(
     }
 }
 
+/**
+ * 时间选择对话框组件
+ * 使用滚轮方式选择小时和分钟
+ */
 @Composable
 private fun TimePickerDialog(
+    // 当前小时
     hour: Int,
+
+    // 当前分钟
     minute: Int,
+
+    // 取消回调
     onDismissRequest: () -> Unit,
+
+    // 确认回调，返回选择的小时和分钟
     onConfirm: (Int, Int) -> Unit
 ) {
     var selectedHour by remember(hour) { mutableIntStateOf(hour) }
@@ -373,6 +443,7 @@ private fun TimePickerDialog(
                 horizontalArrangement = Arrangement.SpaceEvenly,
                 verticalAlignment = Alignment.CenterVertically
             ) {
+                // 小时滚轮
                 TimeWheel(
                     values = (0..23).toList(),
                     value = selectedHour,
@@ -382,6 +453,7 @@ private fun TimePickerDialog(
                     text = ":",
                     style = MaterialTheme.typography.headlineMedium
                 )
+                // 分钟滚轮
                 TimeWheel(
                     values = (0..59).toList(),
                     value = selectedMinute,
@@ -406,10 +478,19 @@ private fun TimePickerDialog(
     )
 }
 
+/**
+ * 时间滚轮组件
+ * 使用 LazyColumn 实现可滚动的数字选择器，支持自动对齐到选中项
+ */
 @Composable
 private fun TimeWheel(
+    // 可选值列表
     values: List<Int>,
+
+    // 当前选中值
     value: Int,
+
+    // 值变化回调
     onValueChange: (Int) -> Unit
 ) {
     val selectedIndex = values.indexOf(value).coerceAtLeast(0)
@@ -418,6 +499,7 @@ private fun TimeWheel(
     )
     val flingBehavior = rememberSnapFlingBehavior(listState)
 
+    // 监听滚动位置变化，更新选中值
     LaunchedEffect(listState, values) {
         snapshotFlow { listState.firstVisibleItemIndex }
             .collect { index ->
@@ -442,11 +524,13 @@ private fun TimeWheel(
                     .fillMaxWidth()
                     .height(44.dp),
                 textAlign = TextAlign.Center,
+                // 选中项使用更大的字体
                 style = if (itemValue == value) {
                     MaterialTheme.typography.headlineSmall
                 } else {
                     MaterialTheme.typography.titleMedium
                 },
+                // 选中项使用更亮的颜色
                 color = if (itemValue == value) {
                     MaterialTheme.colorScheme.onSurface
                 } else {

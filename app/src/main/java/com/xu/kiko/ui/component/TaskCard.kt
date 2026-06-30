@@ -29,20 +29,35 @@ import com.xu.kiko.R
 import com.xu.kiko.ui.theme.KikoTheme
 import com.xu.kiko.ui.theme.spacing
 
+/**
+ * 任务卡片组件
+ * 显示任务标题、备注、分类、完成进度和操作菜单
+ */
 @Composable
 fun TaskCard(
+    // 任务标题
     title: String,
+    // 任务备注（可选）
     note: String?,
+    // 分类显示文本
     categoryText: String,
+    // 已完成番茄钟数
     completedPomodoros: Int,
+    // 预计番茄钟数
     estimatedPomodoros: Int,
+    // 是否完成
     completed: Boolean,
+    // 完成状态变化回调
     onCompletedChange: (Boolean) -> Unit,
+    // 卡片点击回调
     onClick: () -> Unit,
+    // 删除按钮点击回调
     onDeleteClick: () -> Unit,
     modifier: Modifier = Modifier,
+    // 是否可用
     enabled: Boolean = true
 ) {
+    // 操作菜单展开状态
     var menuExpanded by remember { mutableStateOf(false) }
 
     KikoCard(
@@ -57,6 +72,7 @@ fun TaskCard(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.Top
         ) {
+            // 完成复选框
             Checkbox(
                 checked = completed,
                 onCheckedChange = if (enabled) {
@@ -66,21 +82,25 @@ fun TaskCard(
                 }
             )
 
+            // 任务内容区域
             Column(
                 modifier = Modifier.weight(1f),
                 verticalArrangement = Arrangement.spacedBy(
                     MaterialTheme.spacing.small
                 )
             ) {
+                // 任务标题
                 Text(
                     text = title,
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis,
+                    // 完成状态显示删除线
                     textDecoration = if (completed) {
                         TextDecoration.LineThrough
                     } else {
                         TextDecoration.None
                     },
+                    // 完成状态使用灰色
                     color = if (completed) {
                         MaterialTheme.colorScheme.onSurfaceVariant
                     } else {
@@ -89,6 +109,7 @@ fun TaskCard(
                     style = MaterialTheme.typography.titleMedium
                 )
 
+                // 任务备注
                 if (!note.isNullOrBlank()) {
                     Text(
                         text = note,
@@ -99,6 +120,7 @@ fun TaskCard(
                     )
                 }
 
+                // 分类标签和进度
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(
@@ -119,6 +141,7 @@ fun TaskCard(
                 }
             }
 
+            // 更多操作按钮
             IconButton(
                 onClick = {
                     menuExpanded = true
@@ -133,6 +156,7 @@ fun TaskCard(
                 )
             }
 
+            // 操作菜单
             DropdownMenu(
                 expanded = menuExpanded,
                 onDismissRequest = {

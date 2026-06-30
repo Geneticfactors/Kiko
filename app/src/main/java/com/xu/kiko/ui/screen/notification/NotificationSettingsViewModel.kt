@@ -1,4 +1,4 @@
-package com.xu.kiko.ui.screen.notification
+﻿package com.xu.kiko.ui.screen.notification
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -12,18 +12,39 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
+/**
+ * 通知设置页面 ViewModel
+ * 负责管理通知设置的状态和持久化
+ */
 class NotificationSettingsViewModel(
+    // 通知偏好设置存储
     private val preferencesStore: NotificationPreferencesStore,
+
+    // 每日任务提醒调度器
     private val dailyTaskReminderScheduler: DailyTaskReminderScheduler
 ) : ViewModel() {
+
+    // 内部 UI 状态流
     private val _uiState = MutableStateFlow(NotificationSettingsUiState())
+
+    // 暴露给 UI 层的只读状态流
     val uiState: StateFlow<NotificationSettingsUiState> =
         _uiState.asStateFlow()
 
+    /**
+     * ViewModel 初始化
+     * 开始监听通知设置变化
+     */
     init {
         observeSettings()
     }
 
+    /**
+     * 处理用户操作
+     * 根据 [NotificationSettingsUiAction] 分发到对应的处理方法
+     *
+     * @param action 用户操作意图
+     */
     fun onAction(action: NotificationSettingsUiAction) {
         when (action) {
             is NotificationSettingsUiAction.SetNotificationsEnabled ->
@@ -70,6 +91,10 @@ class NotificationSettingsViewModel(
         }
     }
 
+    /**
+     * 观察通知设置变化
+     * 监听偏好设置中的通知配置变化并同步到 UI 和调度器
+     */
     private fun observeSettings() {
         viewModelScope.launch {
             preferencesStore.observeSettings()
@@ -86,12 +111,24 @@ class NotificationSettingsViewModel(
         }
     }
 
+    /**
+     * 更新通知设置
+     * 在协程中执行设置更新操作
+     *
+     * @param block 设置更新操作
+     */
     private fun updateSettings(block: suspend () -> Unit) {
         viewModelScope.launch {
             block()
         }
     }
 
+    /**
+     * 将 Domain [NotificationSettings] 转换为 UI 模型 [NotificationSettingsUiState]
+     *
+     * @param systemNotificationsEnabled 系统通知权限状态
+     * @return UI 状态
+     */
     private fun NotificationSettings.toUiState(
         systemNotificationsEnabled: Boolean
     ): NotificationSettingsUiState {

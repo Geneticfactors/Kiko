@@ -1,4 +1,4 @@
-package com.xu.kiko.ui.screen.tasks
+﻿package com.xu.kiko.ui.screen.tasks
 
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Text
@@ -10,11 +10,22 @@ import com.xu.kiko.ui.component.DangerTextButton
 import com.xu.kiko.ui.component.SecondaryButton
 import com.xu.kiko.ui.theme.KikoTheme
 
+/**
+ * 删除任务确认对话框组件
+ * 确认用户是否要删除指定任务
+ */
 @Composable
 fun DeleteTaskDialog(
+    // 待删除任务的标题
     taskTitle: String,
+
+    // 是否正在删除
     deleting: Boolean,
+
+    // 确认删除回调
     onConfirm: () -> Unit,
+
+    // 取消删除回调
     onDismiss: () -> Unit
 ) {
     AlertDialog(

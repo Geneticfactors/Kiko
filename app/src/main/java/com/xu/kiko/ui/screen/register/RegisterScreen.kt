@@ -1,4 +1,4 @@
-package com.xu.kiko.ui.screen.register
+﻿package com.xu.kiko.ui.screen.register
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -37,11 +37,19 @@ import com.xu.kiko.ui.screen.auth.AuthFieldError
 import com.xu.kiko.ui.theme.KikoTheme
 import com.xu.kiko.ui.theme.spacing
 
+/**
+ * 注册页面主组件
+ * 包含标题、昵称输入框、手机号输入框、密码输入框、确认密码输入框、注册按钮等
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RegisterScreen(
+    // 注册页面 UI 状态
     state: RegisterUiState,
+
+    // 用户操作回调
     onAction: (RegisterUiAction) -> Unit,
+
     modifier: Modifier = Modifier
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -50,20 +58,17 @@ fun RegisterScreen(
         modifier = modifier.fillMaxSize(),
         containerColor = MaterialTheme.colorScheme.background,
         topBar = {
+            // 顶部导航栏（仅返回按钮）
             TopAppBar(
                 title = {},
                 navigationIcon = {
                     IconButton(
-                        onClick = {
-                            onAction(RegisterUiAction.NavigateBack)
-                        },
+                        onClick = { onAction(RegisterUiAction.NavigateBack) },
                         enabled = !state.isSubmitting
                     ) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = stringResource(
-                                R.string.register_back
-                            )
+                            contentDescription = stringResource(R.string.register_back)
                         )
                     }
                 }
@@ -81,6 +86,7 @@ fun RegisterScreen(
                     vertical = MaterialTheme.spacing.large
                 )
         ) {
+            // 标题区域
             Text(
                 text = stringResource(R.string.register_title),
                 style = MaterialTheme.typography.headlineLarge,
@@ -97,15 +103,12 @@ fun RegisterScreen(
 
             Spacer(modifier = Modifier.height(MaterialTheme.spacing.section))
 
+            // 昵称输入框
             KikoTextField(
                 value = state.nickname,
-                onValueChange = {
-                    onAction(RegisterUiAction.NicknameChanged(it))
-                },
+                onValueChange = { onAction(RegisterUiAction.NicknameChanged(it)) },
                 label = stringResource(R.string.register_nickname_label),
-                placeholder = stringResource(
-                    R.string.register_nickname_placeholder
-                ),
+                placeholder = stringResource(R.string.register_nickname_placeholder),
                 errorText = authErrorMessage(state.nicknameError),
                 enabled = !state.isSubmitting,
                 keyboardOptions = KeyboardOptions(
@@ -116,15 +119,12 @@ fun RegisterScreen(
 
             Spacer(modifier = Modifier.height(MaterialTheme.spacing.large))
 
+            // 手机号输入框
             KikoTextField(
                 value = state.phone,
-                onValueChange = {
-                    onAction(RegisterUiAction.PhoneChanged(it))
-                },
+                onValueChange = { onAction(RegisterUiAction.PhoneChanged(it)) },
                 label = stringResource(R.string.register_phone_label),
-                placeholder = stringResource(
-                    R.string.register_phone_placeholder
-                ),
+                placeholder = stringResource(R.string.register_phone_placeholder),
                 errorText = authErrorMessage(state.phoneError),
                 enabled = !state.isSubmitting,
                 keyboardOptions = KeyboardOptions(
@@ -135,16 +135,13 @@ fun RegisterScreen(
 
             Spacer(modifier = Modifier.height(MaterialTheme.spacing.large))
 
+            // 密码输入框
             PasswordTextField(
                 value = state.password,
-                onValueChange = {
-                    onAction(RegisterUiAction.PasswordChanged(it))
-                },
+                onValueChange = { onAction(RegisterUiAction.PasswordChanged(it)) },
                 label = stringResource(R.string.register_password_label),
                 passwordVisible = state.isPasswordVisible,
-                onPasswordVisibilityChange = {
-                    onAction(RegisterUiAction.TogglePasswordVisibility)
-                },
+                onPasswordVisibilityChange = { onAction(RegisterUiAction.TogglePasswordVisibility) },
                 errorText = authErrorMessage(state.passwordError),
                 enabled = !state.isSubmitting,
                 keyboardOption = KeyboardOptions(
@@ -155,20 +152,13 @@ fun RegisterScreen(
 
             Spacer(modifier = Modifier.height(MaterialTheme.spacing.large))
 
+            // 确认密码输入框
             PasswordTextField(
                 value = state.confirmPassword,
-                onValueChange = {
-                    onAction(RegisterUiAction.ConfirmPasswordChanged(it))
-                },
-                label = stringResource(
-                    R.string.register_confirm_password_label
-                ),
+                onValueChange = { onAction(RegisterUiAction.ConfirmPasswordChanged(it)) },
+                label = stringResource(R.string.register_confirm_password_label),
                 passwordVisible = state.isConfirmPasswordVisible,
-                onPasswordVisibilityChange = {
-                    onAction(
-                        RegisterUiAction.ToggleConfirmPasswordVisibility
-                    )
-                },
+                onPasswordVisibilityChange = { onAction(RegisterUiAction.ToggleConfirmPasswordVisibility) },
                 errorText = authErrorMessage(state.confirmPasswordError),
                 enabled = !state.isSubmitting,
                 keyboardOption = KeyboardOptions(
@@ -185,6 +175,7 @@ fun RegisterScreen(
 
             Spacer(modifier = Modifier.height(MaterialTheme.spacing.small))
 
+            // 密码提示
             Text(
                 text = stringResource(R.string.register_password_hint),
                 modifier = Modifier.fillMaxWidth(),
@@ -194,6 +185,7 @@ fun RegisterScreen(
 
             Spacer(modifier = Modifier.height(MaterialTheme.spacing.section))
 
+            // 认证错误提示
             state.authError?.let { error ->
                 Text(
                     text = authErrorMessage(error),
@@ -202,13 +194,10 @@ fun RegisterScreen(
                     color = MaterialTheme.colorScheme.error
                 )
 
-                Spacer(
-                    modifier = Modifier.height(
-                        MaterialTheme.spacing.small
-                    )
-                )
+                Spacer(modifier = Modifier.height(MaterialTheme.spacing.small))
             }
 
+            // 注册按钮
             PrimaryButton(
                 text = stringResource(R.string.register_submit),
                 onClick = { onAction(RegisterUiAction.Submit) },
@@ -219,10 +208,9 @@ fun RegisterScreen(
 
             Spacer(modifier = Modifier.height(MaterialTheme.spacing.large))
 
+            // 本地账号提示
             Text(
-                text = stringResource(
-                    R.string.register_local_account_notice
-                ),
+                text = stringResource(R.string.register_local_account_notice),
                 modifier = Modifier.fillMaxWidth(),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -232,38 +220,29 @@ fun RegisterScreen(
     }
 }
 
+/**
+ * 将 [AuthError] 转换为用户友好的错误提示文本
+ */
 @Composable
 private fun authErrorMessage(error: AuthError): String {
     return when (error) {
-        AuthError.PHONE_ALREADY_REGISTERED ->
-            stringResource(R.string.auth_error_phone_registered)
-
-        AuthError.INVALID_CREDENTIALS ->
-            stringResource(R.string.auth_error_unknown)
-
-        AuthError.UNKNOWN ->
-            stringResource(R.string.auth_error_unknown)
+        AuthError.PHONE_ALREADY_REGISTERED -> stringResource(R.string.auth_error_phone_registered)
+        AuthError.INVALID_CREDENTIALS -> stringResource(R.string.auth_error_unknown)
+        AuthError.UNKNOWN -> stringResource(R.string.auth_error_unknown)
     }
 }
 
+/**
+ * 将 [AuthFieldError] 转换为用户友好的错误提示文本
+ */
 @Composable
 private fun authErrorMessage(error: AuthFieldError?): String? {
     return when (error) {
-        AuthFieldError.REQUIRED ->
-            stringResource(R.string.auth_error_required)
-
-        AuthFieldError.INVALID_LENGTH ->
-            stringResource(R.string.auth_error_nickname_length)
-
-        AuthFieldError.INVALID_PHONE ->
-            stringResource(R.string.auth_error_phone)
-
-        AuthFieldError.PASSWORD_TOO_SHORT ->
-            stringResource(R.string.auth_error_password_short)
-
-        AuthFieldError.PASSWORD_MISMATCH ->
-            stringResource(R.string.auth_error_password_mismatch)
-
+        AuthFieldError.REQUIRED -> stringResource(R.string.auth_error_required)
+        AuthFieldError.INVALID_LENGTH -> stringResource(R.string.auth_error_nickname_length)
+        AuthFieldError.INVALID_PHONE -> stringResource(R.string.auth_error_phone)
+        AuthFieldError.PASSWORD_TOO_SHORT -> stringResource(R.string.auth_error_password_short)
+        AuthFieldError.PASSWORD_MISMATCH -> stringResource(R.string.auth_error_password_mismatch)
         null -> null
     }
 }

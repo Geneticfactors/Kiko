@@ -13,11 +13,17 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.xu.kiko.ui.theme.KikoTheme
 import com.xu.kiko.ui.theme.spacing
 
+/**
+ * 卡片容器组件
+ * 使用 Surface 包装内容，提供统一的卡片样式
+ */
 @Composable
 fun KikoCard(
     modifier: Modifier = Modifier,
+    // 内容内边距，默认使用大间距
     contentPadding: PaddingValues =
         PaddingValues(MaterialTheme.spacing.large),
+    // 卡片内容
     content: @Composable ColumnScope.() -> Unit
 ) {
     Surface(

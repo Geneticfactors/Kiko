@@ -12,12 +12,20 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.xu.kiko.ui.theme.KikoTheme
 
+/**
+ * 筛选标签组件
+ * 选中时显示勾选图标，适用于分类筛选、状态切换等场景
+ */
 @Composable
 fun KikoFilterChip(
+    // 标签文本
     text: String,
+    // 是否选中
     selected: Boolean,
+    // 点击回调
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    // 是否可用
     enabled: Boolean = true
 ) {
     FilterChip(
@@ -28,6 +36,7 @@ fun KikoFilterChip(
         },
         modifier = modifier.heightIn(min = 48.dp),
         enabled = enabled,
+        // 选中时显示勾选图标
         leadingIcon = if(selected){
             {
                 Icon(

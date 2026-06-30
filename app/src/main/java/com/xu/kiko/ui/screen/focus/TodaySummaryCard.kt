@@ -1,4 +1,4 @@
-package com.xu.kiko.ui.screen.focus
+﻿package com.xu.kiko.ui.screen.focus
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -20,6 +20,10 @@ import com.xu.kiko.ui.component.KikoCard
 import com.xu.kiko.ui.theme.KikoTheme
 import com.xu.kiko.ui.theme.spacing
 
+/**
+ * 格式化专注时长显示
+ * 将分钟数转换为友好的可读格式（支持小时和分钟混合显示）
+ */
 @Composable
 private fun formatFocusMinutes(minutes: Int): String {
     val safeMinutes = minutes.coerceAtLeast(0)
@@ -27,28 +31,24 @@ private fun formatFocusMinutes(minutes: Int): String {
     val remainingMinutes = safeMinutes % 60
 
     return when {
-        hours == 0 -> stringResource(
-            R.string.focus_minutes,
-            remainingMinutes
-        )
-
-        remainingMinutes == 0 -> stringResource(
-            R.string.focus_hours,
-            hours
-        )
-
-        else -> stringResource(
-            R.string.focus_hours_minutes,
-            hours,
-            remainingMinutes
-        )
+        hours == 0 -> stringResource(R.string.focus_minutes, remainingMinutes)
+        remainingMinutes == 0 -> stringResource(R.string.focus_hours, hours)
+        else -> stringResource(R.string.focus_hours_minutes, hours, remainingMinutes)
     }
 }
 
+/**
+ * 今日专注摘要卡片组件
+ * 显示今日完成的番茄数和专注总时长
+ */
 @Composable
 fun TodaySummaryCard(
+    // 今日完成的番茄数
     pomodoroCount: Int,
+
+    // 今日专注总分钟数
     focusMinutes: Int,
+
     modifier: Modifier = Modifier
 ) {
     KikoCard(modifier = modifier) {
@@ -57,10 +57,9 @@ fun TodaySummaryCard(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
+            // 番茄数显示
             Row(
-                horizontalArrangement = Arrangement.spacedBy(
-                    MaterialTheme.spacing.small
-                ),
+                horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.small),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Icon(
@@ -71,18 +70,14 @@ fun TodaySummaryCard(
                 )
 
                 Text(
-                    text = stringResource(
-                        R.string.focus_pomodoro_count,
-                        pomodoroCount.coerceAtLeast(0)
-                    ),
+                    text = stringResource(R.string.focus_pomodoro_count, pomodoroCount.coerceAtLeast(0)),
                     style = MaterialTheme.typography.titleMedium
                 )
             }
 
+            // 专注时长显示
             Row(
-                horizontalArrangement = Arrangement.spacedBy(
-                    MaterialTheme.spacing.small
-                ),
+                horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.small),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Icon(
@@ -107,6 +102,17 @@ private fun TodaySummaryCardPreview() {
         TodaySummaryCard(
             pomodoroCount = 4,
             focusMinutes = 135
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun TodaySummaryCardZeroPreview() {
+    KikoTheme {
+        TodaySummaryCard(
+            pomodoroCount = 0,
+            focusMinutes = 0
         )
     }
 }
