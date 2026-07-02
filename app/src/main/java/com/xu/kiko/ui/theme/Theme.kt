@@ -16,18 +16,18 @@ enum class KikoThemeColor(
     val displayName: String,
     val color: Color
 ) {
-    BLUE("蔚蓝", ThemeBlue),
-    GREEN("翠绿", ThemeGreen),
-    AMBER("琥珀", ThemeAmber),
-    PINK("樱粉", ThemePink),
-    ORANGE("暖橙", ThemeOrange),
-    VIOLET("紫罗兰", ThemeViolet)
+    BLUE("群青", ThemeBlue),
+    GREEN("官绿", ThemeGreen),
+    AMBER("栀子", ThemeAmber),
+    PINK("长春", ThemePink),
+    ORANGE("洛神珠", ThemeOrange),
+    VIOLET("齐紫", ThemeViolet)
 }
 
 /**根据选中的品牌色生成浅色模式配色。*/
 private fun lightKikoColorScheme(themeColor: KikoThemeColor): ColorScheme {
     val primary = themeColor.color
-    //琥珀色较浅，按钮前景使用深色以保证对比度
+    //栀子色较浅，按钮前景使用深色以保证对比度
     val onPrimary = if (themeColor == KikoThemeColor.AMBER) OnLightPrimary else OnPrimary
 
     return lightColorScheme(
@@ -96,7 +96,7 @@ private fun darkKikoColorScheme(themeColor: KikoThemeColor): ColorScheme {
 /**
  * Kiko 全局主题入口。
  *
- * 默认跟随系统深浅模式并使用蔚蓝主题，同时向页面提供颜色、字体、圆角和间距令牌。
+ * 默认跟随系统深浅模式并使用群青主题，同时向页面提供颜色、字体、圆角和间距令牌。
  */
 @Composable
 fun KikoTheme(

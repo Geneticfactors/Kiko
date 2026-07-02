@@ -2,14 +2,14 @@ package com.xu.kiko.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-//默认主题色：蔚蓝
-val ThemeBlue = Color(0xFF3A80F7)
-//可选主题色：翠绿、琥珀、樱粉、暖橙、紫罗兰
-val ThemeGreen = Color(0xFF53B35B)
-val ThemeAmber = Color(0xFFF4C544)
-val ThemePink = Color(0xFFF36CAA)
-val ThemeOrange = Color(0xFFFB7239)
-val ThemeViolet = Color(0xFF8852EE)
+//默认主题色：群青
+val ThemeBlue = Color(0xFF2E59A7)
+//可选主题色：官绿、栀子、长春、洛神珠、齐紫
+val ThemeGreen = Color(0xFF2A6E3F)
+val ThemeAmber = Color(0xFFFAC03D)
+val ThemePink = Color(0xFFDC6B82)
+val ThemeOrange = Color(0xFFD23918)
+val ThemeViolet = Color(0xFF6C216D)
 
 /**浅色模式基础颜色**/
 //页面最底层的极浅蓝灰背景
@@ -56,5 +56,5 @@ val DangerContainer = Color(0xFFFFDAD6)
 /**通用前景颜色**/
 //深色实心按钮上的文字和图标
 val OnPrimary = Color(0xFFFFFFFF)
-//琥珀等浅色按钮上的深色文字
+//栀子等浅色按钮上的深色文字
 val OnLightPrimary = Color(0xFF302400)
